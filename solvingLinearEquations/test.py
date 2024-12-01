@@ -30,7 +30,6 @@ jacobi = Jacobi(data)
 seidel = Seidel(data)
 
 solution1 = jacobi.solve(3)
-
 solution2 = seidel.solve(3)
 
 
