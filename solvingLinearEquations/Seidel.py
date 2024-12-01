@@ -1,10 +1,12 @@
 from Data import Data
 from LinearSolution import LinearSolution
+import time
 
 class Seidel:
     def __init__(self, Data):
         self.data = Data
         self.solutions = []
+        self.time = 0 
 
     def solve_fixed_iterations(self, num_iterations):
         """Solve the linear system using the Seidel method with a fixed number of iterations."""
@@ -77,10 +79,19 @@ class Seidel:
         return self.solutions
 
     def solve(self, iterations=None, error=None):
-        """ Main function to solve the system of equations based on either iterations or error tolerance."""
         if iterations is not None:
-            return self.solve_fixed_iterations(iterations)
+            start_time = time.perf_counter()
+            solution = self.solve_fixed_iterations(iterations)
+            end_time = time.perf_counter
+            self.time = (end_time - start_time)*1000 
+            return solution 
         elif error is not None:
-            return self.solve_with_error(error)
+            start_time = time.perf_counter()
+            solution = self.solve_with_error(error)
+            end_time = time.perf_counter()
+            self.time = (end_time - start_time)*1000 
+            return solution 
         else:
             raise ValueError("Either iterations or error tolerance must be provided.")
+    def getTime(self):
+        return self.time      

@@ -1,10 +1,11 @@
 from Data import Data
 from LinearSolution import LinearSolution
-
+import time
 class Gauss:
     def __init__(self, Data):
         self.data = Data
         self.sol = LinearSolution()
+        self.time =0
       
 
     def swap_rows(self, a, i, r, n):
@@ -49,7 +50,7 @@ class Gauss:
         return x
 
     def solve(self):
-        """ Main function to solve the system of equations using Gaussian Elimination """
+        start_time = time.perf_counter()
         co = self.data.getA()
         n = len(co)
         res = self.data.getB()
@@ -63,4 +64,8 @@ class Gauss:
         x = self.back_substitution(a, n)    # Perform back substitution
         
         self.sol.setSolution(x)
+        end_time = time.perf_counter()
+        self.time = (end_time - start_time)*1000
         return self.sol
+    def getTime(self):
+      return self.time

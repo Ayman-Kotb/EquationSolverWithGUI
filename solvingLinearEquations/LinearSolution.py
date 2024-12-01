@@ -1,5 +1,3 @@
-
-
 class LinearSolution:
     def __init__(self):
         self.solutions = []

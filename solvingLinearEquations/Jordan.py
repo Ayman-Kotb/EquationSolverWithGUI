@@ -1,10 +1,11 @@
 from Data import Data
 from LinearSolution import LinearSolution
-
+import time
 class Jordan:
     def __init__(self, Data):
         self.data = Data
         self.sol = LinearSolution()
+        self.time = 0
 
     def obtain_solution(self, a, n):
         """ Obtain the solution vector x from the matrix a """
@@ -51,7 +52,7 @@ class Jordan:
         return a
 
     def solve(self):
-        """ Main function to solve the system of equations using Gauss-Jordan Elimination """
+        start_time = time.perf_counter()
         co = self.data.getA()
         n = len(co)
         res = self.data.getB()
@@ -68,6 +69,9 @@ class Jordan:
 
         # Obtain the solution
         x = self.obtain_solution(a, n)
-
+        end_time = time.perf_counter()
+        self.time = (end_time - start_time)*1000
         self.sol.setSolution(x)
         return self.sol
+    def getTime(self):
+      return self.time  
