@@ -10,14 +10,21 @@ class Gauss:
         for i in range (len(res)):
             co[i].append(res[i])
         a = co 
-        self.linear = LinearSolution()
+        self.sol = LinearSolution()
         for i in range(n):
             if a[i][i] == 0.0:
                 for r in range(i+1,n):
                     if a[r][i]!= 0.0:
                         a[i], a[r] = a[r], a[i]
                         break
-            
+            max = a[i][i]
+            index =-1 
+            for r in range(i+1, n):
+                if (a[r][i]>max) : 
+                    max = a[r][i]
+                    index = r
+            if index!=-1:
+                a[i] , a[index] = a[index] , a[i]
             for j in range(i+1,n):
                 ratio = a[j][i]/a[i][i]
             
@@ -35,7 +42,7 @@ class Gauss:
     
             x[i] = x[i]/a[i][i]
         
-        self.linear.setSolution(x)
+        self.sol.setSolution(x)
 
 
 
