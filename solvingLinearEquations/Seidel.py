@@ -82,7 +82,7 @@ class Seidel:
         if iterations is not None:
             start_time = time.perf_counter()
             solution = self.solve_fixed_iterations(iterations)
-            end_time = time.perf_counter
+            end_time = time.perf_counter()
             self.time = (end_time - start_time)*1000 
             return solution 
         elif error is not None:

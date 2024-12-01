@@ -1,8 +1,7 @@
 import sys
-from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-    QLineEdit, QSlider, QPushButton, QMessageBox, QGridLayout, QComboBox
-)
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QLineEdit, \
+    QPushButton, QSlider, QComboBox, QMessageBox
+
 
 class EquationSolverApp(QWidget):
     def __init__(self):
@@ -54,10 +53,10 @@ class EquationSolverApp(QWidget):
         method_layout = QHBoxLayout()
         method_label = QLabel("Select Method:")
         self.method_combo = QComboBox()
-        methods = ["Gauss Elimination", "Gauss-Jordan","LU Decomposition", "Gauss-Seidel", "Jacobi-Iteration"]
+        methods = ["Gauss Elimination", "Gauss-Jordan", "LU Decomposition", "Gauss-Seidel", "Jacobi-Iteration"]
         self.method_combo.addItems(methods)
         self.method_combo.currentIndexChanged.connect(self.method_selected)
-        
+
         method_layout.addWidget(method_label)
         method_layout.addWidget(self.method_combo)
         layout.addLayout(method_layout)
@@ -78,7 +77,7 @@ class EquationSolverApp(QWidget):
 
     def create_equation_rows(self):
         # Clear existing equation rows
-        for i in reversed(range(self.equation_grid.count())): 
+        for i in reversed(range(self.equation_grid.count())):
             widget = self.equation_grid.itemAt(i).widget()
             if widget is not None:
                 widget.deleteLater()  # Safely delete the widget
@@ -86,7 +85,7 @@ class EquationSolverApp(QWidget):
         self.equations.clear()  # Clear the previous equations list
 
         # Create new equation rows based on the number of variables
-        for row in range(self.variables): 
+        for row in range(self.variables):
             self.create_equation_row(row)
 
     def create_equation_row(self, row):
@@ -95,7 +94,7 @@ class EquationSolverApp(QWidget):
             entry_var = QLineEdit(self)
             entry_var.setFixedWidth(40)
             self.equation_grid.addWidget(entry_var, row, var_index)
-            
+
             if var_index != 2 * self.variables - 2:
                 label_var = QLabel(f"x{var_index // 2 + 1} + ")
                 self.equation_grid.addWidget(label_var, row, var_index + 1)
@@ -121,15 +120,15 @@ class EquationSolverApp(QWidget):
         coefficients = []
         for i in range(len(self.equations)):
             coeffs = [self.equation_grid.itemAt(i * (self.variables * 2 + 1) + j).widget().text()
-                       for j in range(self.variables * 2 + 1)]
+                      for j in range(self.variables * 2 + 1)]
             coefficients.append(coeffs)
 
         if any(not coeff for coeff in coefficients):
             QMessageBox.warning(self, "Input Error", "Please fill all coefficients.")
             return
-        
+
         QMessageBox.information(self, "Method Selected",
-            f"Solving using {method} method with {self.significant_figures} significant figures.\nCoefficients: {coefficients}")
+                                f"Solving using {method} method with {self.significant_figures} significant figures.\nCoefficients: {coefficients}")
 
     def start(self):
         QMessageBox.information(self, "Start", "Starting the solver.")

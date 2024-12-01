@@ -39,7 +39,7 @@ for i, solution in enumerate(solution1):
     print(f"Iteration {i}: {solution.getSolutions()}")
     
 
-print("seidel",seidel.getTime())
+print("seidel", seidel.getTime())
 for i, solution in enumerate(solution2):
     print(f"Iteration {i}: {solution.getSolutions()}")
     
