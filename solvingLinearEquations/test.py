@@ -6,6 +6,7 @@ from LinearSolution import LinearSolution  # The LinearSolution class should hav
 
 from Gauss import Gauss
 from Jordan import Jordan
+from LU import LU
 import time
 
 # Assuming you have a system to solve
@@ -26,29 +27,7 @@ B = [55, 65, 75, 85, 95, 105, 115, 125, 135, 145]
 
 data = Data(A, B)
 
-jacobi = Jacobi(data)
-seidel = Seidel(data)
+LU = LU(data)
+sol1 = LU.solve_doolittle(9)
 
-solution1 = jacobi.solve(3)
-solution2 = seidel.solve(3)
-
-
-print("jacobi",jacobi.getTime())
-for i, solution in enumerate(solution1):
-    print(f"Iteration {i}: {solution.getSolutions()}")
-    
-
-print("seidel",seidel.getTime())
-for i, solution in enumerate(solution2):
-    print(f"Iteration {i}: {solution.getSolutions()}")
-    
-    
-    
-gauss = Gauss(data)
-solution3 = gauss.solve()
-print("gauss", solution3.getSolutions(), gauss.getTime())
-
-    
-jordon = Jordan(data)
-solution4 = jordon.solve()
-print("Jordan", solution4.getSolutions(),jordon.getTime())
+print(sol1.getSolutions())

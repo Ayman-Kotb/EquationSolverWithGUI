@@ -1,12 +1,12 @@
+import time
 from Data import Data
 from LinearSolution import LinearSolution
-import time
+
 class Gauss:
     def __init__(self, Data):
         self.data = Data
         self.sol = LinearSolution()
-        self.time =0
-      
+        self.time = 0
 
     def swap_rows(self, a, i, r, n):
         """ Swap two rows in matrix a """
@@ -25,31 +25,31 @@ class Gauss:
             a = self.swap_rows(a, i, index, n)
         return a
 
-    def forward_elimination(self, a, n):
+    def forward_elimination(self, a, n, precision):
         """ Perform forward elimination to create upper triangular matrix """
         for i in range(n):
             if a[i][i] == 0.0:
                 a = self.partial_pivot(a, i, n)
-            
+
             for j in range(i + 1, n):
-                ratio = a[j][i] / a[i][i]
+                ratio = round(a[j][i] / a[i][i], precision)
                 for k in range(n + 1):
-                    a[j][k] -= ratio * a[i][k]
+                    a[j][k] = round(a[j][k] - ratio * a[i][k], precision)
         return a
 
-    def back_substitution(self, a, n):
+    def back_substitution(self, a, n, precision):
         """ Perform back substitution to find the solution """
         x = [0] * n
-        x[n - 1] = a[n - 1][n] / a[n - 1][n - 1]
-        
+        x[n - 1] = round(a[n - 1][n] / a[n - 1][n - 1], precision)
+
         for i in range(n - 2, -1, -1):
-            x[i] = a[i][n]
+            x[i] = round(a[i][n], precision)
             for j in range(i + 1, n):
-                x[i] -= a[i][j] * x[j]
-            x[i] /= a[i][i]
+                x[i] -= round(a[i][j] * x[j], precision)
+            x[i] = round(x[i] / a[i][i], precision)
         return x
 
-    def solve(self):
+    def solve(self, precision):
         start_time = time.perf_counter()
         co = self.data.getA()
         n = len(co)
@@ -60,12 +60,14 @@ class Gauss:
             co[i].append(res[i])
 
         a = co
-        a = self.forward_elimination(a, n)  # Perform forward elimination
-        x = self.back_substitution(a, n)    # Perform back substitution
-        
+        a = self.forward_elimination(a, n, precision)  # Perform forward elimination
+        x = self.back_substitution(a, n, precision)    # Perform back substitution
+        for j in range(len(x)):
+            x[j] = round(x[j], precision)
         self.sol.setSolution(x)
         end_time = time.perf_counter()
-        self.time = (end_time - start_time)*1000
+        self.time = (end_time - start_time) * 1000  # Time in milliseconds
         return self.sol
+
     def getTime(self):
-      return self.time
+        return self.time

@@ -1,145 +1,141 @@
-import sys
-from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-    QLineEdit, QSlider, QPushButton, QMessageBox, QGridLayout, QComboBox
-)
+import tkinter as tk
+from tkinter import ttk, messagebox
+from Gauss import Gauss
+from Jordan import Jordan
+from LU import LU
+from Seidel import Seidel
+from Jacobi import Jacobi
+from Data import Data
 
-class EquationSolverApp(QWidget):
+class EquationSolverApp(tk.Tk):
     def __init__(self):
         super().__init__()
+        self.title("System of Equations Solver")
+        self.geometry("600x500")
 
+        self.data = Data(a=[], b=[])
         self.variables = 2  # Default number of variables
-        self.significant_figures = 2  # Default significant figures
-
-        self.initUI()
-
-    def initUI(self):
-        self.setWindowTitle("System of Equations Solver")
-        self.setGeometry(100, 100, 600, 500)
-
-        layout = QVBoxLayout()
-
-        # Number of Variables
-        var_layout = QHBoxLayout()
-        var_label = QLabel("Number of Variables:")
-        self.var_slider = QSlider()
-        self.var_slider.setOrientation(1)  # Horizontal
-        self.var_slider.setRange(2, 10)
-        self.var_slider.setValue(self.variables)
-        self.var_slider.valueChanged.connect(self.update_equation_rows)
-
-        var_layout.addWidget(var_label)
-        var_layout.addWidget(self.var_slider)
-        layout.addLayout(var_layout)
-
-        # Significant Figures
-        sig_layout = QHBoxLayout()
-        sig_label = QLabel("Significant Figures:")
-        self.sig_slider = QSlider()
-        self.sig_slider.setOrientation(1)  # Horizontal
-        self.sig_slider.setRange(1, 10)
-        self.sig_slider.setValue(self.significant_figures)
-
-        sig_layout.addWidget(sig_label)
-        sig_layout.addWidget(self.sig_slider)
-        layout.addLayout(sig_layout)
-
-        # Equation Input
-        self.equation_grid = QGridLayout()
-        self.equations = []
-        self.create_equation_rows()
-        layout.addLayout(self.equation_grid)
-
-        # Method Selection
-        method_layout = QHBoxLayout()
-        method_label = QLabel("Select Method:")
-        self.method_combo = QComboBox()
-        methods = ["Gauss Elimination", "Gauss-Jordan","LU Decomposition", "Gauss-Seidel", "Jacobi-Iteration"]
-        self.method_combo.addItems(methods)
-        self.method_combo.currentIndexChanged.connect(self.method_selected)
+        self.methods = ["Gauss Elimination", "Gauss-Jordan", "LU Decomposition", "Gauss-Seidel", "Jacobi-Iteration"]
+        self.current_method = tk.StringVar(value=self.methods[0])
         
-        method_layout.addWidget(method_label)
-        method_layout.addWidget(self.method_combo)
-        layout.addLayout(method_layout)
+        self.entries = []  # Store entry widgets for coefficients and constants
+        self.create_widgets()
 
-        # Control Buttons
-        control_layout = QHBoxLayout()
-        start_button = QPushButton("Start")
-        start_button.clicked.connect(self.start)
-        control_layout.addWidget(start_button)
+    def create_widgets(self):
+        # Variables slider
+        slider_frame = tk.Frame(self)
+        slider_frame.pack(pady=10)
 
-        end_button = QPushButton("End")
-        end_button.clicked.connect(self.end)
-        control_layout.addWidget(end_button)
+        tk.Label(slider_frame, text="Number of Variables:").pack(side=tk.LEFT)
+        self.var_slider = ttk.Scale(slider_frame, from_=2, to=15, orient=tk.HORIZONTAL, command=self.update_equations)
+        self.var_slider.set(self.variables)
+        self.var_slider.pack(side=tk.LEFT, padx=10)
 
-        layout.addLayout(control_layout)
+        # Method selection
+        method_frame = tk.Frame(self)
+        method_frame.pack(pady=10)
 
-        self.setLayout(layout)
+        tk.Label(method_frame, text="Select Method:").pack(side=tk.LEFT)
+        self.method_combo = ttk.Combobox(method_frame, values=self.methods, textvariable=self.current_method)
+        self.method_combo.pack(side=tk.LEFT, padx=10)
 
-    def create_equation_rows(self):
-        # Clear existing equation rows
-        for i in reversed(range(self.equation_grid.count())): 
-            widget = self.equation_grid.itemAt(i).widget()
-            if widget is not None:
-                widget.deleteLater()  # Safely delete the widget
+        # LU Method selection (for LU Decomposition)
+        self.lu_method_label = tk.Label(method_frame, text="LU Decomposition Method:")
+        self.lu_method_label.pack(side=tk.LEFT, padx=10)
+        self.lu_method_combo = ttk.Combobox(method_frame, values=["Doolittle", "Crout", "Cholesky"], textvariable=self.lu_method)
+        self.lu_method_combo.pack(side=tk.LEFT, padx=10)
 
-        self.equations.clear()  # Clear the previous equations list
+        # Equation input grid
+        self.equation_frame = tk.Frame(self)
+        self.equation_frame.pack(pady=20)
+        self.create_equation_entries()
 
-        # Create new equation rows based on the number of variables
-        for row in range(self.variables): 
-            self.create_equation_row(row)
+        # Buttons
+        button_frame = tk.Frame(self)
+        button_frame.pack(pady=10)
 
-    def create_equation_row(self, row):
-        # Create entries for coefficients and the constant
-        for var_index in range(0, 2 * self.variables - 1, 2):
-            entry_var = QLineEdit(self)
-            entry_var.setFixedWidth(40)
-            self.equation_grid.addWidget(entry_var, row, var_index)
-            
-            if var_index != 2 * self.variables - 2:
-                label_var = QLabel(f"x{var_index // 2 + 1} + ")
-                self.equation_grid.addWidget(label_var, row, var_index + 1)
-            else:
-                label_var = QLabel(f"x{var_index // 2 + 1} = ")
-                self.equation_grid.addWidget(label_var, row, var_index + 1)
+        start_button = tk.Button(button_frame, text="Start", command=self.solve)
+        start_button.pack(side=tk.LEFT, padx=10)
 
-        entry_res = QLineEdit(self)
-        entry_res.setFixedWidth(40)
-        self.equation_grid.addWidget(entry_res, row, self.variables * 2 + 1)
+        quit_button = tk.Button(button_frame, text="Quit", command=self.quit)
+        quit_button.pack(side=tk.LEFT, padx=10)
 
-        self.equations.append(entry_res)  # Store the result entry for later use
+        # Results label
+        self.results_label = tk.Label(self, text="Results will be displayed here.", font=("Arial", 12), wraplength=400)
+        self.results_label.pack(pady=10)
 
-    def update_equation_rows(self):
-        self.variables = self.var_slider.value()
-        self.create_equation_rows()  # Update the equation rows
+    def create_equation_entries(self):
+        # Clear existing entries
+        for widget in self.equation_frame.winfo_children():
+            widget.destroy()
+        self.entries = []
 
-    def method_selected(self):
-        selected_method = self.method_combo.currentText()
-        QMessageBox.information(self, "Method Selected", f"You selected: {selected_method}")
+        # Create rows for equations
+        for i in range(self.variables):
+            row = []
+            for j in range(self.variables):
+                entry = tk.Entry(self.equation_frame, width=5)
+                entry.grid(row=i, column=j * 2, padx=5, pady=5)
+                row.append(entry)
 
-    def solve(self, method):
-        coefficients = []
-        for i in range(len(self.equations)):
-            coeffs = [self.equation_grid.itemAt(i * (self.variables * 2 + 1) + j).widget().text()
-                       for j in range(self.variables * 2 + 1)]
-            coefficients.append(coeffs)
+                if j < self.variables - 1:
+                    tk.Label(self.equation_frame, text=f"x{j + 1} +").grid(row=i, column=j * 2 + 1)
+                else:
+                    tk.Label(self.equation_frame, text=f"x{j + 1} =").grid(row=i, column=j * 2 + 1)
 
-        if any(not coeff for coeff in coefficients):
-            QMessageBox.warning(self, "Input Error", "Please fill all coefficients.")
+            const_entry = tk.Entry(self.equation_frame, width=5)
+            const_entry.grid(row=i, column=self.variables * 2 - 1, padx=5, pady=5)
+            row.append(const_entry)
+            self.entries.append(row)
+
+    def update_equations(self, value):
+        self.variables = int(float(value))
+        self.create_equation_entries()
+
+    def solve(self):
+        # Gather input data
+        try:
+            self.data.a = [[float(entry.get()) for entry in row[:-1]] for row in self.entries]
+            self.data.b = [float(row[-1].get()) for row in self.entries]
+        except ValueError:
+            messagebox.showerror("Input Error", "Please enter valid numbers in all fields.")
             return
-        
-        QMessageBox.information(self, "Method Selected",
-            f"Solving using {method} method with {self.significant_figures} significant figures.\nCoefficients: {coefficients}")
 
-    def start(self):
-        QMessageBox.information(self, "Start", "Starting the solver.")
+        # Solve using the selected method
+        method = self.current_method.get()
+        try:
+            if method == "Gauss Elimination":
+                solver = Gauss(self.data)
+                result = solver.solve()
+            elif method == "Gauss-Jordan":
+                solver = Jordan(self.data)
+                result = solver.solve()
+            elif method == "LU Decomposition":
+                solver = LU(self.data)
+                if self.lu_method.get() == "Doolittle":
+                    result = solver.solve_doolittle()
+                elif self.lu_method.get() == "Crout":
+                    result = solver.solve_crout()
+                elif self.lu_method.get() == "Cholesky":
+                    result = solver.solve_cholesky()
+            elif method == "Gauss-Seidel":
+                solver = Seidel(self.data)
+                result = solver.solve()
+            elif method == "Jacobi-Iteration":
+                solver = Jacobi(self.data)
+                result = solver.solve()
+            else:
+                result = "Unknown Method"
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred during computation: {e}")
+            return
 
-    def end(self):
-        QApplication.quit()
+        # Format the result vector
+        result_text = "\n".join([f"x{i+1} = {ans:.4f}" for i, ans in enumerate(result)])
 
+        # Display results
+        self.results_label.config(text=f"Solution:\n{result_text}")
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    ex = EquationSolverApp()
-    ex.show()
-    sys.exit(app.exec_())
+    app = EquationSolverApp()
+    app.mainloop()
