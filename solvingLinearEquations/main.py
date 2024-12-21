@@ -8,7 +8,8 @@ from LinearSolution import LinearSolution
 from Data import Data
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-    QLineEdit, QSlider, QPushButton, QMessageBox, QGridLayout, QComboBox, QRadioButton, QGroupBox, QStackedWidget
+    QLineEdit, QSlider, QPushButton, QMessageBox, QGridLayout, QComboBox, QRadioButton, QGroupBox, QStackedWidget,
+    QScrollArea
 )
 
 class EquationSolverApp(QWidget):
@@ -466,64 +467,92 @@ class EquationSolverApp(QWidget):
         layout
 
     def setup_results_page(self, layout):
-        self.results_label = QLabel(f"the result is ")
+    # Main layout for the results
+        main_layout = QVBoxLayout()
+
+    # Result label
+        self.results_label = QLabel("The result is: " + "This is a very long result that needs to be scrollable. " * 50)
         self.results_label.setStyleSheet("""
-            QLabel{
-                color: white;                /* Text color */
-                font-size: 13px;
-                font-weight: bold;
-            }
-        """)
+        QLabel {
+            color: white;                /* Text color */
+            font-size: 13px;
+            font-weight: bold;
+        }
+    """)
+        self.results_label.setWordWrap(True)  # Enable word wrap
+
+    # Scroll area beside the results label
+        self.scroll_area_beside = QScrollArea()
+        self.scroll_area_beside.setWidgetResizable(True)
+    
+    # Set the results label as the widget for the scroll area
+        self.scroll_area_beside.setWidget(self.results_label)
+
+    # Horizontal layout for results label and scroll area
+        h_layout = QHBoxLayout()
+        h_layout.addWidget(self.scroll_area_beside)
+
+    # Add horizontal layout to the main layout
+        main_layout.addLayout(h_layout)
+
+    # Time taken label
         self.results_time = QLabel("Time taken")
         self.results_time.setStyleSheet("""
-            QLabel{
-                color: white;                /* Text color */
-                font-size: 13px;
-                font-weight: bold;
-            }
-        """)
-        layout.addWidget(self.results_label)
-        layout.addWidget(self.results_time)
+        QLabel {
+            color: white;                /* Text color */
+            font-size: 13px;
+            font-weight: bold;
+        }
+    """)
+        main_layout.addWidget(self.results_time)
+
+    # Buttons
         clear_back_button = QPushButton("Clear and Return to Input")
-        clear_back_button.clicked.connect(self.on_clear_back_button_click)  # Connect to the new method
+        clear_back_button.clicked.connect(self.on_clear_back_button_click)
         clear_back_button.setStyleSheet("""
-            QPushButton{
-                background-color: #181a18;  /* Background color */
-                color: #b80404;                /* Text color */
-                border: 2px solid #181a18;      /* Border color and width */
-                border-radius: 10px;         /* Rounded borders */
-                padding: 5px;                /* Optional padding */
-                height: 15px;
-                font-size: 14px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #b80404;   /* Background color on hover */
-                color: #ccc;
-                border: 2px solid #b80404;
-            }
-        """)
+        QPushButton {
+            background-color: #181a18;  /* Background color */
+            color: #b80404;             /* Text color */
+            border: 2px solid #181a18;  /* Border color and width */
+            border-radius: 10px;        /* Rounded borders */
+            padding: 5px;               /* Optional padding */
+            height: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        QPushButton:hover {
+            background-color: #b80404;  /* Background color on hover */
+            color: #ccc;
+            border: 2px solid #b80404;
+        }
+    """)
+    
         Return_To_Last_button = QPushButton("Return to the last inputs")
         Return_To_Last_button.clicked.connect(self.return_back)
         Return_To_Last_button.setStyleSheet("""
-            QPushButton{
-                background-color: #181a18;  /* Background color */
-                color: #e8c113;                /* Text color */
-                border: 2px solid #181a18;      /* Border color and width */
-                border-radius: 10px;         /* Rounded borders */
-                padding: 5px;                /* Optional padding */
-                height: 15px;
-                font-size: 14px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #e8c113;   /* Background color on hover */
-                color: #ccc;
-                border: 2px solid #e8c113;
-            }
-        """)
-        layout.addWidget(clear_back_button)
-        layout.addWidget(Return_To_Last_button)
+        QPushButton {
+            background-color: #181a18;  /* Background color */
+            color: #e8c113;             /* Text color */
+            border: 2px solid #181a18;  /* Border color and width */
+            border-radius: 10px;        /* Rounded borders */
+            padding: 5px;               /* Optional padding */
+            height: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        QPushButton:hover {
+            background-color: #e8c113;  /* Background color on hover */
+            color: #ccc;
+            border: 2px solid #e8c113;
+        }
+    """)
+
+    # Add buttons to the main layout
+        main_layout.addWidget(clear_back_button)
+        main_layout.addWidget(Return_To_Last_button)
+
+    # Set the layout for the parent widget
+        layout.addLayout(main_layout)
 
     def on_clear_back_button_click(self):
         self.show_input_page()
@@ -644,10 +673,7 @@ class EquationSolverApp(QWidget):
                 coeff_entry = self.equation_grid.itemAt(i * (self.variables * 2 + 1) + j * 2).widget().text()
                 row.append(float(coeff_entry))  # Convert the input to float and add to the row
             self.data.a.append(row)
-            if(i%2==0):
-                constant_entry = self.equation_grid.itemAt((i+1)*(self.variables*2)).widget().text()
-            else:
-                constant_entry = self.equation_grid.itemAt((i+1)*(self.variables*2) + 1).widget().text()
+            constant_entry = self.equation_grid.itemAt((i+1)*(self.variables*2) + i).widget().text()
             self.data.b.append(float(constant_entry))  # Append the row to the matrix
         
         # Solve using the selected method
@@ -742,40 +768,6 @@ class EquationSolverApp(QWidget):
     def Change_Precision(self):
         self.significant_figures = self.sig_slider.value()
         self.sig_current.setText(f": {self.significant_figures}")
-
-    def end(self):
-        QApplication.quit()
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    ex = EquationSolverApp()
-    ex.show()
-    sys.exit(app.exec_())
-                if item is not None:  # Check if the item exists
-                    widget = item.widget()  # Get the widget
-                    if widget is not None:  # Check if the widget is valid
-                        widget.setText("")  # Clear the text
-            if(i%2==0):
-                clearing_item = self.equation_grid.itemAt((i+1)*(self.variables*2))
-                if clearing_item is not None:  # Check if the item exists
-                    widget = clearing_item.widget()  # Get the widget
-                    if widget is not None:  # Check if the widget is valid
-                        widget.setText("")  # Clear the text
-            else:
-                clearing_item = self.equation_grid.itemAt((i+1)*(self.variables*2) + 1)
-                if clearing_item is not None:  # Check if the item exists
-                    widget = clearing_item.widget()  # Get the widget
-                    if widget is not None:  # Check if the widget is valid
-                        widget.setText("")
-        self.radio_ite.setChecked(True)
-        self.limit_input.setText("")
-        self.initial_guess.setText("")
-    def get_last_update(self):
-        self.data = Data(a=[], b=[])
-
-    
-    def Change_Precision(self):
-        self.significant_figures = self.sig_slider.value()
 
     def end(self):
         QApplication.quit()
