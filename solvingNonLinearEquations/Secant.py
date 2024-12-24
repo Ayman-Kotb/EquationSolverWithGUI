@@ -15,6 +15,8 @@ def Secant(expression, x0, x1, significantFigures, tol=0.00001, maxIterations=50
     x2 = x1
     relative_error = float('inf')
     correct_sig_figs = 0
+
+    iteration_history = []
     
     while True:
         it += 1
@@ -32,6 +34,19 @@ def Secant(expression, x0, x1, significantFigures, tol=0.00001, maxIterations=50
         
         correct_sig_figs = floor(2 - log10(2 * relative_error)) if relative_error > 0 else significantFigures
         
+        iteration_details = {
+            'iteration': it,
+            'x0': round_to_significantFigures(x0, significantFigures),
+            'x1': round_to_significantFigures(x1, significantFigures),
+            'x2': round_to_significantFigures(x2, significantFigures),
+            'fx0': round_to_significantFigures(f0, significantFigures),
+            'fx1': round_to_significantFigures(f1, significantFigures),
+            'fx2': round_to_significantFigures(f2, significantFigures),
+            'relative_error': round_to_significantFigures(relative_error, significantFigures),
+            'sig_figs': round_to_significantFigures(correct_sig_figs, significantFigures)
+        }
+        iteration_history.append(iteration_details)
+
         if relative_error <= tol or abs(f2) < tol:
             break
             
@@ -49,7 +64,8 @@ def Secant(expression, x0, x1, significantFigures, tol=0.00001, maxIterations=50
         'iterations': it,
         'relative_error': round_to_significantFigures(relative_error, significantFigures),
         'correct_Significant_Figures': round_to_significantFigures(correct_sig_figs, significantFigures),
-        'function_value': round_to_significantFigures(f(x2), significantFigures)
+        'function_value': round_to_significantFigures(f(x2), significantFigures),
+        'iteration_history': iteration_history
     }
 
 # Example usage:

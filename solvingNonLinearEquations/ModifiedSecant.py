@@ -12,6 +12,8 @@ def ModifiedSecant(expression, x0, delta, significantFigures, tol=0.00001, maxIt
     relative_error = float('inf')
     correct_sig_figs = 0
     
+    iteration_history = []
+
     while True:
         it += 1
         
@@ -33,6 +35,18 @@ def ModifiedSecant(expression, x0, delta, significantFigures, tol=0.00001, maxIt
         
         correct_sig_figs = floor(2 - log10(2 * relative_error)) if relative_error > 0 else significantFigures
         
+        iteration_details = {
+            'iteration': it,
+            'x': round_to_significantFigures(x0, significantFigures),
+            'x_plus_delta': round_to_significantFigures(x0 + delta, significantFigures),
+            'x_new': round_to_significantFigures(x1, significantFigures),
+            'fx': round_to_significantFigures(fx0, significantFigures),
+            'fx_plus_delta': round_to_significantFigures(fx0_delta, significantFigures),
+            'relative_error': round_to_significantFigures(relative_error, significantFigures),
+            'sig_figs': round_to_significantFigures(correct_sig_figs, significantFigures)
+        }
+        iteration_history.append(iteration_details)
+
         if relative_error <= tol:
             break
             
@@ -49,7 +63,8 @@ def ModifiedSecant(expression, x0, delta, significantFigures, tol=0.00001, maxIt
         'iterations': it,
         'relative_error': round_to_significantFigures(relative_error, significantFigures),
         'correct_Significant_Figures': round_to_significantFigures(correct_sig_figs, significantFigures),
-        'function_value': final_fx
+        'function_value': final_fx, 
+        'iteration_history': iteration_history
     }
 
 # Example usage:
