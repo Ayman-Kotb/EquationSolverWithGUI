@@ -1,3 +1,4 @@
+from Plot import PlotWindow
 from Bisection import Bisection
 from NewtonRaphson import Original_Newton_Raphson
 from Secant import Secant
@@ -12,7 +13,7 @@ from PyQt5.QtWidgets import (
     QScrollArea
 )
 import sys
-
+from sympy import symbols, sympify, lambdify
 class NonLinearSolver(QWidget):
     def __init__(self):
         super().__init__()
@@ -54,7 +55,19 @@ class NonLinearSolver(QWidget):
         main_layout.addWidget(self.stacked_widget)
         self.setLayout(main_layout)
 
-        
+    def open_plot_window(self , equation_str):
+      # Define the string equation to plot
+      equation_str = self.equation_input.text()  # Example string representation of the equation
+      
+      # Open the plotting window and pass the string equation
+      self.plot_window = PlotWindow(
+          equation_str=equation_str,  # Pass the string equation here
+          x_range=(-5, 5),
+          title="Linear Function: f(x) = 3x + 5"
+      )
+      self.plot_window.show()
+
+
 
 
     def setup_input_page(self, layout):
@@ -122,7 +135,32 @@ class NonLinearSolver(QWidget):
             }
         """)
         layout.addWidget(self.equation_input)
+        
+        plot_button = QPushButton("Plot")
+        plot_button.clicked.connect(self.open_plot_window)
+        #plot_button.clicked.connect()  # Connect to your plot function
+        layout.addWidget(plot_button)
 
+        # Style the Plot button with new color scheme
+        plot_button.setStyleSheet("""
+            QPushButton{
+               background-color: #000000;  /* Background color */
+                color: #0000FF;                /* Text color */
+                border: 2px solid #0000FF;      /* Border color and width */
+                border-radius: 10px;         /* Rounded borders */
+                padding: 5px;                /* Optional padding */
+                height: 15px;
+                font-size: 16px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #0000FF;   /* Background color on hover */
+                color: #ccc;
+                border: 2px solid #0000FF;
+            }
+        """)
+
+        
         initial_values_layout = QHBoxLayout()
         self.initial_value_0 = QLineEdit(self)
         self.initial_value_0.setPlaceholderText("Enter the first initial value: ")
@@ -348,7 +386,7 @@ class NonLinearSolver(QWidget):
         layout.addWidget(self.Max_input)
 
         control_layout = QHBoxLayout()
-        start_button = QPushButton("Start")
+        start_button = QPushButton("Start") # Start button
         start_button.clicked.connect(self.start)
         control_layout.addWidget(start_button)
         start_button.setStyleSheet("""
