@@ -20,7 +20,7 @@ def Bisection(expression, a, b, significantFigures, tol=0.00001, maxIterations=5
     if fa * fb >= 0:
         raise ValueError("method may fail.")
     
-    
+    iterations = []
     it = 0
     previous_c = round_to_significantFigures(a, significantFigures)
     c = previous_c 
@@ -37,7 +37,15 @@ def Bisection(expression, a, b, significantFigures, tol=0.00001, maxIterations=5
         else:
             relative_error =(abs(c - previous_c))*100
 
-        
+        iteration_data = {
+            'iteration': it,
+            'xl': round_to_significantFigures(a, significantFigures),
+            'xu': round_to_significantFigures(b, significantFigures),
+            'xr': round_to_significantFigures(c, significantFigures),
+            'f(xr)': round_to_significantFigures(fc, significantFigures),
+            'relative_error': round_to_significantFigures(relative_error, significantFigures)
+        }
+        iterations.append(iteration_data)
         
         if relative_error <= tol:
             break
@@ -63,10 +71,19 @@ def Bisection(expression, a, b, significantFigures, tol=0.00001, maxIterations=5
         'iterations': it,
         'relative_error': round_to_significantFigures(relative_error, significantFigures),
         'correct_Significant_Figures': round_to_significantFigures(correct_sig_figs, significantFigures),
-        'function_value': round_to_significantFigures(f(c), significantFigures)
+        'function_value': round_to_significantFigures(f(c), significantFigures),
+        'iteration_history': iterations 
     }
     
     
     
-print(Bisection("sin(x)- x**2 ", 0.5, 1, 6,tol=2)) 
-print(Bisection("3*x**4+6.1*x**3-2*x**2+3*x+2 ", -1, 0,6,tol=0.01)) 
+# print(Bisection("sin(x)- x**2 ", 0.5, 1, 6,tol=2)) 
+# print(Bisection("3*x**4+6.1*x**3-2*x**2+3*x+2 ", -1, 0,6,tol=0.01)) 
+result = Bisection("sin(x)- x**2 ", 0.5, 1, 6, tol=2)
+for iteration in result['iteration_history']:
+    print(f"Iteration {iteration['iteration']}:")
+    print(f"  xl = {iteration['xl']}")
+    print(f"  xu = {iteration['xu']}")
+    print(f"  xr = {iteration['xr']}")
+    print(f"  f(xr) = {iteration['f(xr)']}")
+    print(f"  relative error = {iteration['relative_error']}%")

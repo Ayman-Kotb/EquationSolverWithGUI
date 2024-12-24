@@ -19,7 +19,7 @@ def false_position(expression, a, b, significantFigures, tol=0.00001, maxIterati
     
     if fa * fb >= 0:
         raise ValueError(f"method may fail.")
-    
+    iterations = []
     it = 0
     previous_c = a
     correct_sig_figs = 0
@@ -42,7 +42,15 @@ def false_position(expression, a, b, significantFigures, tol=0.00001, maxIterati
      
         correct_sig_figs = floor(2 - log10(2 * relative_error))
         
-       
+        iteration_data = {
+            'iteration': it,
+            'xl': round_to_significantFigures(a, significantFigures),
+            'xu': round_to_significantFigures(b, significantFigures),
+            'xr': round_to_significantFigures(c, significantFigures),
+            'f(xr)': round_to_significantFigures(fc, significantFigures),
+            'relative_error': round_to_significantFigures(relative_error, significantFigures)
+        }
+        iterations.append(iteration_data)
         if relative_error <= tol:
             break
             
@@ -67,7 +75,16 @@ def false_position(expression, a, b, significantFigures, tol=0.00001, maxIterati
         'iterations': it,
         'relative_error': round_to_significantFigures(relative_error, significantFigures),
         'correct_Significant_Figures': correct_sig_figs,
-        'function_value': round_to_significantFigures(fc, significantFigures)
+        'function_value': round_to_significantFigures(fc, significantFigures),
+        'iteration_history': iterations
     }
 
-print(false_position("3*x**4+6.1*x**3-2*x**2+3*x+2 ", -1, 0,6,tol=0.01)) 
+# print(false_position("3*x**4+6.1*x**3-2*x**2+3*x+2 ", -1, 0,6,tol=0.01)) 
+result = false_position("sin(x)- x**2 ", 0.5, 1, 6, tol=2)
+for iteration in result['iteration_history']:
+    print(f"Iteration {iteration['iteration']}:")
+    print(f"  xl = {iteration['xl']}")
+    print(f"  xu = {iteration['xu']}")
+    print(f"  xr = {iteration['xr']}")
+    print(f"  f(xr) = {iteration['f(xr)']}")
+    print(f"  relative error = {iteration['relative_error']}%")
