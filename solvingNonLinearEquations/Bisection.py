@@ -1,10 +1,9 @@
 from math import *
-import time
 from convertToFunc import create_function_from_expression
 from significantFigures import round_to_significantFigures
 
-def Bisection(expression, a, b, significantFigures=28, tol=0.00001, maxIterations=50):
-    start_time = time.perf_counter()
+def Bisection(expression, a, b, significantFigures, tol=0.00001, maxIterations=50):
+   
     f = create_function_from_expression(expression)
     
     
@@ -37,7 +36,6 @@ def Bisection(expression, a, b, significantFigures=28, tol=0.00001, maxIteration
             relative_error = (abs(c - previous_c) / abs(c))*100
         else:
             relative_error =(abs(c - previous_c))*100
-            
 
         iteration_data = {
             'iteration': it,
@@ -45,15 +43,17 @@ def Bisection(expression, a, b, significantFigures=28, tol=0.00001, maxIteration
             'xu': round_to_significantFigures(b, significantFigures),
             'xr': round_to_significantFigures(c, significantFigures),
             'f(xr)': round_to_significantFigures(fc, significantFigures),
-            'relative_error':None if it==1 else round_to_significantFigures(relative_error, significantFigures)
+            'relative_error': round_to_significantFigures(relative_error, significantFigures)
         }
         iterations.append(iteration_data)
         
         if relative_error <= tol:
             break
         
-        
-        correct_sig_figs = floor(2 - log10(2 * relative_error))
+        if relative_error > 0:
+                correct_sig_figs = floor(2 - log10(2 * relative_error))
+        else:
+                correct_sig_figs = significantFigures
         if fc == 0:
             break
         elif fa * fc< 0:
@@ -68,19 +68,25 @@ def Bisection(expression, a, b, significantFigures=28, tol=0.00001, maxIteration
         if it >= maxIterations:
             print(f"Maximum iterations ({maxIterations}) reached")
             break
-        
-        
-    end_time = time.perf_counter()
-    theTime = (end_time - start_time)*1000
+    
     return {
         'root': round_to_significantFigures(c, significantFigures),
         'iterations': it,
         'relative_error': round_to_significantFigures(relative_error, significantFigures),
         'correct_Significant_Figures': round_to_significantFigures(correct_sig_figs, significantFigures),
         'function_value': round_to_significantFigures(f(c), significantFigures),
-        'time': theTime,
-        'iteration_history': iterations
-        
+        'iteration_history': iterations 
     }
     
     
+    
+# print(Bisection("sin(x)- x**2 ", 0.5, 1, 6,tol=2)) 
+# print(Bisection("3*x**4+6.1*x**3-2*x**2+3*x+2 ", -1, 0,6,tol=0.01)) 
+#result = Bisection("sin(x)- x**2 ", 0.5, 1, 6, tol=2)
+#for iteration in result['iteration_history']:
+    #print(f"Iteration {iteration['iteration']}:")
+    #print(f"  xl = {iteration['xl']}")
+    #print(f"  xu = {iteration['xu']}")
+    #print(f"  xr = {iteration['xr']}")
+    #print(f"  f(xr) = {iteration['f(xr)']}")
+    #print(f"  relative error = {iteration['relative_error']}%")
