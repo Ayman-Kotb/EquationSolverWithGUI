@@ -1,9 +1,10 @@
 from math import *
+import time
 from convertToFunc import create_function_from_expression
 from significantFigures import round_to_significantFigures
 
-def false_position(expression, a, b, significantFigures, tol=0.00001, maxIterations=50):
-
+def false_position(expression, a, b, significantFigures=28, tol=0.00001, maxIterations=50):
+    start_time = time.perf_counter()
     f = create_function_from_expression(expression)
     
    
@@ -69,22 +70,16 @@ def false_position(expression, a, b, significantFigures, tol=0.00001, maxIterati
         if it >= maxIterations:
             print(f"Warning: Maximum iterations ({maxIterations}) reached")
             break
-    
+    end_time = time.perf_counter()
+    theTime = (end_time - start_time)*1000
     return {
         'root': round_to_significantFigures(c, significantFigures),
         'iterations': it,
         'relative_error': round_to_significantFigures(relative_error, significantFigures),
         'correct_Significant_Figures': correct_sig_figs,
         'function_value': round_to_significantFigures(fc, significantFigures),
+        'time': theTime,
         'iteration_history': iterations
+       
     }
 
-# print(false_position("3*x**4+6.1*x**3-2*x**2+3*x+2 ", -1, 0,6,tol=0.01)) 
-result = false_position("sin(x)- x**2 ", 0.5, 1, 6, tol=2)
-for iteration in result['iteration_history']:
-    print(f"Iteration {iteration['iteration']}:")
-    print(f"  xl = {iteration['xl']}")
-    print(f"  xu = {iteration['xu']}")
-    print(f"  xr = {iteration['xr']}")
-    print(f"  f(xr) = {iteration['f(xr)']}")
-    print(f"  relative error = {iteration['relative_error']}%")
