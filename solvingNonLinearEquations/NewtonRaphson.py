@@ -1,5 +1,3 @@
-from math import *
-from convertToFunc import create_function_from_expression
 from significantFigures import round_to_significantFigures
 from calculateDerivative import create_derivative_from_expression
 
@@ -44,7 +42,7 @@ def Original_Newton_Raphson(expression, xi, significantFigures, tol=0.00001, max
             else:
                 relative_error = abs(xi - previous_xi) * 100
         
-            correct_sig_figs = floor(2 - log10(2 * relative_error))
+            correct_sig_figs = floor(2 - log10(2 * relative_error)) if relative_error > 0 else significantFigures
         
             if relative_error <= tol:
                 break

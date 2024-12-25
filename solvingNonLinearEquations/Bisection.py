@@ -50,7 +50,10 @@ def Bisection(expression, a, b, significantFigures, tol=0.00001, maxIterations=5
         if relative_error <= tol:
             break
         
-        correct_sig_figs = floor(2 - log10(2 * relative_error))
+        if relative_error > 0:
+                correct_sig_figs = floor(2 - log10(2 * relative_error))
+        else:
+                correct_sig_figs = significantFigures
         if fc == 0:
             break
         elif fa * fc< 0:
@@ -79,11 +82,11 @@ def Bisection(expression, a, b, significantFigures, tol=0.00001, maxIterations=5
     
 # print(Bisection("sin(x)- x**2 ", 0.5, 1, 6,tol=2)) 
 # print(Bisection("3*x**4+6.1*x**3-2*x**2+3*x+2 ", -1, 0,6,tol=0.01)) 
-result = Bisection("sin(x)- x**2 ", 0.5, 1, 6, tol=2)
-for iteration in result['iteration_history']:
-    print(f"Iteration {iteration['iteration']}:")
-    print(f"  xl = {iteration['xl']}")
-    print(f"  xu = {iteration['xu']}")
-    print(f"  xr = {iteration['xr']}")
-    print(f"  f(xr) = {iteration['f(xr)']}")
-    print(f"  relative error = {iteration['relative_error']}%")
+#result = Bisection("sin(x)- x**2 ", 0.5, 1, 6, tol=2)
+#for iteration in result['iteration_history']:
+    #print(f"Iteration {iteration['iteration']}:")
+    #print(f"  xl = {iteration['xl']}")
+    #print(f"  xu = {iteration['xu']}")
+    #print(f"  xr = {iteration['xr']}")
+    #print(f"  f(xr) = {iteration['f(xr)']}")
+    #print(f"  relative error = {iteration['relative_error']}%")

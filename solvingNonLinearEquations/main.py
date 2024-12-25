@@ -11,8 +11,12 @@ from PyQt5.QtWidgets import (
     QLineEdit, QSlider, QPushButton, QMessageBox, QGridLayout, QComboBox, QRadioButton, QGroupBox, QStackedWidget,
     QScrollArea
 )
+from PyQt5.QtCore import pyqtSignal
 
 class EquationSolverApp(QWidget):
+    return_to_main = pyqtSignal()
+    open_non_linear_solver = pyqtSignal()
+
     def __init__(self):
         super().__init__()
         self.data = Data(a=[], b=[])
@@ -464,7 +468,51 @@ class EquationSolverApp(QWidget):
         """)
 
         layout.addLayout(control_layout)
-        layout
+
+        Switching_layout = QHBoxLayout()
+        linear_switch_button = QPushButton("Switch to Non-Linear Equations")
+        linear_switch_button.clicked.connect(self.open_non_linear_window)
+        Switching_layout.addWidget(linear_switch_button)
+        linear_switch_button.setStyleSheet("""
+                QPushButton{
+                background-color: #181a18;  /* Background color */
+                color: #5b24a3;                /* Text color */
+                border: 2px solid #181a18;      /* Border color and width */
+                border-radius: 10px;         /* Rounded borders */
+                padding: 5px;                /* Optional padding */
+                height: 15px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #5b24a3;   /* Background color on hover */
+                color: #ccc;
+                border: 2px solid #5b24a3;
+            }
+            """)
+        
+        back_main_button = QPushButton("Return Back to Main Page")
+        back_main_button.clicked.connect(self.open_main_window)
+        Switching_layout.addWidget(back_main_button)
+        back_main_button.setStyleSheet("""
+               QPushButton {
+            background-color: #181a18;  /* Background color */
+            color: #e8c113;             /* Text color */
+            border: 2px solid #181a18;  /* Border color and width */
+            border-radius: 10px;        /* Rounded borders */
+            padding: 5px;               /* Optional padding */
+            height: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        QPushButton:hover {
+            background-color: #e8c113;  /* Background color on hover */
+            color: #ccc;
+            border: 2px solid #e8c113;
+        }
+            """)
+        
+        layout.addLayout(Switching_layout)
 
     def setup_results_page(self, layout):
     # Main layout for the results
@@ -772,8 +820,10 @@ class EquationSolverApp(QWidget):
     def end(self):
         QApplication.quit()
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    ex = EquationSolverApp()
-    ex.show()
-    sys.exit(app.exec_())
+    def open_non_linear_window(self):
+        self.open_non_linear_solver.emit()
+        self.close()
+
+    def open_main_window(self):
+        self.return_to_main.emit()
+        self.close()

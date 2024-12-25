@@ -44,7 +44,7 @@ def Modified1_Newton_Raphson(expression, xi, significantFigures, m = 1, tol=0.00
             else:
                 relative_error = abs(xi - previous_xi) * 100
         
-            correct_sig_figs = floor(2 - log10(2 * relative_error))
+            correct_sig_figs = floor(2 - log10(2 * relative_error)) if relative_error > 0 else significantFigures
         
             if relative_error <= tol:
                 break
@@ -66,8 +66,7 @@ def Modified1_Newton_Raphson(expression, xi, significantFigures, m = 1, tol=0.00
             })
         
             if it >= maxIterations:
-                raise ValueError(f"Warning: Maximum iterations ({maxIterations}) reached")
-            
+                break
     
     return {
         'root': round_to_significantFigures(xi, significantFigures),
