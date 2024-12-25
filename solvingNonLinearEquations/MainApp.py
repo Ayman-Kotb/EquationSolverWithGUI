@@ -1,6 +1,6 @@
 from main import EquationSolverApp
 from non_linear_solver import NonLinearSolver
-
+from ErrorHandler import ErrorHandler
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel,
     QLineEdit, QSlider, QPushButton, QMessageBox, QGridLayout, QComboBox, QRadioButton, QGroupBox, QStackedWidget,
@@ -51,7 +51,6 @@ class MainApp(QWidget):
                 background-color: #249c06;   /* Background color on hover */
                 color: #ccc;
                 border: 2px solid #249c06;
-                cursor: pointer;
             }
         """
 
@@ -72,6 +71,7 @@ class MainApp(QWidget):
         """
         This method will open the Non-Linear Equations Solver window.
         """
+        ErrorHandler.show_error("Non-Linear Equations Solver")
         self.nonlinear_window = NonLinearSolver()  # Assuming NonLinearSolver is the class to solve non-linear equations
         self.nonlinear_window.show()
         self.close()  # Close the main window after opening the non-linear solver
