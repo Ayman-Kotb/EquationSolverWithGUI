@@ -82,4 +82,3 @@ def Original_Newton_Raphson(expression, xi, significantFigures = 28, tol=0.00001
         'iteration_history': iterations
     }
 
-print(Original_Newton_Raphson("3*x**4+6.1*x**3-2*x**2+3*x+2 ",0 ,6 ,tol=0.01)) 

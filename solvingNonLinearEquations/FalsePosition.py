@@ -49,7 +49,7 @@ def false_position(expression, a, b, significantFigures=28, tol=0.00001, maxIter
             'xu': round_to_significantFigures(b, significantFigures),
             'xr': round_to_significantFigures(c, significantFigures),
             'f(xr)': round_to_significantFigures(fc, significantFigures),
-            'relative_error': round_to_significantFigures(relative_error, significantFigures)
+            'relative_error': None if it==1 else round_to_significantFigures(relative_error, significantFigures)
         }
         iterations.append(iteration_data)
         if relative_error <= tol:
