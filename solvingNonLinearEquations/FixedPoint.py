@@ -2,7 +2,7 @@ from math import *
 from convertToFunc import create_function_from_expression
 from significantFigures import round_to_significantFigures
 
-def FixedPoint(expression, x0, significantFigures, tol=0.00001, maxIterations=50):
+def FixedPoint(expression, x0, significantFigures = 28, tol=0.00001, maxIterations=50):
     g = create_function_from_expression(expression)
     
     x0 = round_to_significantFigures(x0, significantFigures)

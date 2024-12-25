@@ -2,7 +2,7 @@ from math import *
 from convertToFunc import create_function_from_expression
 from significantFigures import round_to_significantFigures
 
-def Secant(expression, x0, x1, significantFigures, tol=0.00001, maxIterations=50):
+def Secant(expression, x0, x1, significantFigures = 28, tol=0.00001, maxIterations=50):
     f = create_function_from_expression(expression)
     
     x0 = round_to_significantFigures(x0, significantFigures)
