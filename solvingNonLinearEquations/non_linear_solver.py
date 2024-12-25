@@ -72,7 +72,7 @@ class NonLinearSolver(QWidget):
       self.plot_window = PlotWindow(
           equation_str=equation_str,  # Pass the string equation here
           x_range=(-5, 5),
-          title="Linear Function: f(x) = 3x + 5"
+          title = f"Function: f(x) = {self.equation_input.text()}"
       )
       self.plot_window.show()
 

@@ -66,7 +66,7 @@ def Modified1_Newton_Raphson(expression, xi, significantFigures, m = 1, tol=0.00
             })
         
             if it >= maxIterations:
-                break
+                raise ValueError("Maximum iterations reached, the system is diverging") 
     
     return {
         'root': round_to_significantFigures(xi, significantFigures),
