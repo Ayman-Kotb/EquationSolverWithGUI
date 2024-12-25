@@ -73,7 +73,7 @@ class MainApp(QWidget):
         """
         This method will open the Non-Linear Equations Solver window.
         """
-        ErrorHandler.show_error("Non-Linear Equations Solver")
+        
         self.nonlinear_window = NonLinearSolver()  # Assuming NonLinearSolver is the class to solve non-linear equations
         self.nonlinear_window.return_to_main.connect(self.show)
         self.nonlinear_window.open_equation_solver.connect(self.open_linear_window)
