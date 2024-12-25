@@ -1,8 +1,10 @@
+from time import time
 from math import *
 from convertToFunc import create_function_from_expression
 from significantFigures import round_to_significantFigures
 
 def ModifiedSecant(expression, x0, delta, significantFigures, tol=0.00001, maxIterations=50):
+    start_time = time()
     f = create_function_from_expression(expression)
     
     x0 = round_to_significantFigures(x0, significantFigures)
@@ -57,14 +59,16 @@ def ModifiedSecant(expression, x0, delta, significantFigures, tol=0.00001, maxIt
             break
     
     final_fx = round_to_significantFigures(f(x1), significantFigures)
-    
+    end_time = time()
+    execution_time = end_time - start_time
     return {
         'root': round_to_significantFigures(x1, significantFigures),
         'iterations': it,
-        'relative_error': round_to_significantFigures(relative_error, significantFigures),
+        'relative_error': round_to_significantFigures(relative_error, significantFigures) if it!=1 else "No Relative error",
         'correct_Significant_Figures': round_to_significantFigures(correct_sig_figs, significantFigures),
         'function_value': final_fx, 
-        'iteration_history': iteration_history
+        'iteration_history': iteration_history,
+        'execution_time': execution_time
     }
 
 # Example usage:
