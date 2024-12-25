@@ -1,11 +1,9 @@
 from math import *
-from time import time
 from convertToFunc import create_function_from_expression
 from significantFigures import round_to_significantFigures
 
 def FixedPoint(expression, x0, significantFigures, tol=0.00001, maxIterations=50):
     g = create_function_from_expression(expression)
-    start_time = time()
     
     x0 = round_to_significantFigures(x0, significantFigures)
     
@@ -56,12 +54,11 @@ def FixedPoint(expression, x0, significantFigures, tol=0.00001, maxIterations=50
     
     # Calculate final function value (how far from being a true fixed point)
     final_error = round_to_significantFigures(abs(x1 - g(x1)), significantFigures)
-    end_time = time()
-    execution_time = end_time - start_time
+    
     return {
         'root': round_to_significantFigures(x1, significantFigures),
         'iterations': it,
-        'relative_error': round_to_significantFigures(relative_error, significantFigures) if it!=1 else "No Relative error" ,
+        'relative_error': round_to_significantFigures(relative_error, significantFigures),
         'correct_Significant_Figures': round_to_significantFigures(correct_sig_figs, significantFigures),
         'function_value': final_error,
         'iteration_history': iteration_history
