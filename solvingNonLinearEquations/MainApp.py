@@ -65,6 +65,8 @@ class MainApp(QWidget):
         This method will open the Linear Equations Solver window.
         """
         self.linear_window = EquationSolverApp()  # Assuming EquationSolverApp is the class to solve linear equations
+        self.linear_window.return_to_main.connect(self.show)
+        self.linear_window.open_non_linear_solver.connect(self.open_nonlinear_window)
         self.linear_window.show()
         self.close()  # Close the main window after opening the linear solver
 
@@ -73,6 +75,8 @@ class MainApp(QWidget):
         This method will open the Non-Linear Equations Solver window.
         """
         self.nonlinear_window = NonLinearSolver()  # Assuming NonLinearSolver is the class to solve non-linear equations
+        self.nonlinear_window.return_to_main.connect(self.show)
+        self.nonlinear_window.open_equation_solver.connect(self.open_linear_window)
         self.nonlinear_window.show()
         self.close()  # Close the main window after opening the non-linear solver
 
