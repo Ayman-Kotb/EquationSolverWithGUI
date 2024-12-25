@@ -12,9 +12,17 @@ from PyQt5.QtWidgets import (
     QLineEdit, QSlider, QPushButton, QMessageBox, QGridLayout, QComboBox, QRadioButton, QGroupBox, QStackedWidget,
     QScrollArea
 )
+from PyQt5.QtCore import pyqtSignal
+
+
+
 import sys
 from sympy import symbols, sympify, lambdify
 class NonLinearSolver(QWidget):
+    return_to_main = pyqtSignal()
+    open_equation_solver = pyqtSignal()
+
+
     def __init__(self):
         super().__init__()
         self.first = 0
@@ -23,7 +31,8 @@ class NonLinearSolver(QWidget):
         self.significant_figures = 2  # Default significant figures
         self.equation = ""
         self.result = []
-        self.sub_selection = ""
+        self.sub_selection = "Secant"
+        self.picked = "Bisection"
 
         self.initUI()
 
@@ -197,6 +206,22 @@ class NonLinearSolver(QWidget):
         initial_values_layout.addWidget(self.initial_value_0)
         initial_values_layout.addWidget(self.initial_value_1)
 
+        self.m = QLineEdit(self)
+        self.m.setPlaceholderText("Enter the m value: ")
+        self.m.setStyleSheet("""
+            QLineEdit {
+                background-color: #181a18;  /* Background color */
+                color: white;                /* Text color */
+                border: 2px solid #181a18;      /* Border color and width */
+                border-radius: 10px;         /* Rounded borders */
+                padding: 5px;                /* Optional padding */
+                height: 15px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+        """)
+        self.m.setVisible(False)
+
         NR_method_layout = QHBoxLayout()
         self.NR_method_label = QLabel("Select Newton - Raphson Version:")
         self.NR_method_label.setStyleSheet("""
@@ -210,6 +235,7 @@ class NonLinearSolver(QWidget):
         self.NR_method_combo = QComboBox()
         NR_methods = ["Original Newton-Raphson", "Modified Version 1 : Newton-Raphson", "Modified Version 2 : Newton-Raphson"]
         self.NR_method_combo.addItems(NR_methods)
+        self.NR_method_combo.currentIndexChanged.connect(lambda: self.NR_method_selected(self.NR_method_combo.currentText()))
         self.NR_method_combo.setStyleSheet("""
             QComboBox {
                 background-color: #181a18;  /* Background color */
@@ -349,7 +375,7 @@ class NonLinearSolver(QWidget):
         layout.addLayout(SE_method_layout)
         layout.addLayout(NR_method_layout)
         layout.addLayout(initial_values_layout)
-
+        layout.addWidget(self.m)
 
         self.Error_input = QLineEdit(self)
         self.Error_input.setPlaceholderText("Enter the Error Value: ")
@@ -431,6 +457,51 @@ class NonLinearSolver(QWidget):
         layout.addLayout(control_layout)
         layout
 
+        Switching_layout = QHBoxLayout()
+        linear_switch_button = QPushButton("Switch to Linear Equations")
+        linear_switch_button.clicked.connect(self.open_linear_window)
+        Switching_layout.addWidget(linear_switch_button)
+        linear_switch_button.setStyleSheet("""
+                QPushButton{
+                background-color: #181a18;  /* Background color */
+                color: #5b24a3;                /* Text color */
+                border: 2px solid #181a18;      /* Border color and width */
+                border-radius: 10px;         /* Rounded borders */
+                padding: 5px;                /* Optional padding */
+                height: 15px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #5b24a3;   /* Background color on hover */
+                color: #ccc;
+                border: 2px solid #5b24a3;
+            }
+            """)
+        
+        back_main_button = QPushButton("Return Back to Main Page")
+        back_main_button.clicked.connect(self.open_main_window)
+        Switching_layout.addWidget(back_main_button)
+        back_main_button.setStyleSheet("""
+               QPushButton {
+            background-color: #181a18;  /* Background color */
+            color: #e8c113;             /* Text color */
+            border: 2px solid #181a18;  /* Border color and width */
+            border-radius: 10px;        /* Rounded borders */
+            padding: 5px;               /* Optional padding */
+            height: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        QPushButton:hover {
+            background-color: #e8c113;  /* Background color on hover */
+            color: #ccc;
+            border: 2px solid #e8c113;
+        }
+            """)
+        
+        layout.addLayout(Switching_layout)
+
     def setup_results_page(self, layout):
     # Main layout for the results
         main_layout = QVBoxLayout()
@@ -461,15 +532,40 @@ class NonLinearSolver(QWidget):
         main_layout.addLayout(h_layout)
 
     # Time taken label
-        self.results_time = QLabel("Time taken")
-        self.results_time.setStyleSheet("""
-        QLabel {
-            color: white;                /* Text color */
-            font-size: 13px;
-            font-weight: bold;
-        }
-    """)
-        main_layout.addWidget(self.results_time)
+        self.results_history = QComboBox()
+        self.results_history.setStyleSheet("""
+            QComboBox {
+                background-color: #181a18;  /* Background color */
+                color: white;                /* Text color */
+                border: 2px solid #181a18;      /* Border color and width */
+                border-radius: 10px;         /* Rounded borders */
+                padding: 5px;                /* Optional padding */
+                height: 15px;
+                font-size: 14px;
+                font-weight: bold;
+                }
+            QComboBox::drop-down {
+                border: 2px solid #ccc;      /* Border of the drop-down area */
+                border-radius: 10px;         /* Rounded borders for the drop-down */
+                width: 20px;                  /* Width of the drop-down arrow area */
+            }
+             QComboBox QAbstractItemView {
+                background-color: #181a18;
+                selection-background-color: #55e339; /* Background color on hover */
+                selection-color: #ccc; /* Text color on hover */
+            }
+            QComboBox QAbstractItemView::item {
+                background-color: #181a18; /* Default item background */
+                color: #ccc; /* Default item text color */
+            }
+            QComboBox QAbstractItemView::item:hover {
+                background-color: #55e339; /* Background color when hovering */
+                color: #ccc; /* Text color when hovering */
+            }      
+        """)
+        self.results_history.currentIndexChanged.connect(lambda : self.change_result())
+        main_layout.addWidget(self.results_history)
+
 
     # Buttons
         clear_back_button = QPushButton("Clear and Return to Input")
@@ -524,12 +620,14 @@ class NonLinearSolver(QWidget):
         self.sig_current.setText(f": {self.significant_figures}")
 
     def method_selected(self, Selection):
+        self.picked = Selection
         if((Selection == "Bisection") | (Selection == "False Position")):
             self.initial_value_1.setVisible(True)
             self.NR_method_label.setVisible(False)
             self.SE_method_label.setVisible(False)
             self.SE_method_combo.setVisible(False)
             self.NR_method_combo.setVisible(False)
+            self.m.setVisible(False)
         elif(Selection == "Newton-Raphson Methods"):
             self.initial_value_1.setVisible(False)
             self.NR_method_label.setVisible(True)
@@ -542,18 +640,29 @@ class NonLinearSolver(QWidget):
             self.SE_method_label.setVisible(True)
             self.SE_method_combo.setVisible(True)
             self.NR_method_combo.setVisible(False)
+            self.m.setVisible(False)
         else:
             self.initial_value_1.setVisible(False)
             self.NR_method_label.setVisible(False)
             self.SE_method_label.setVisible(False)
             self.SE_method_combo.setVisible(False)
             self.NR_method_combo.setVisible(False)
+            self.m.setVisible(False)
 
     def SE_method_selected(self, Selection):
         if(Selection == "Secant Method"):
             self.initial_value_1.setPlaceholderText("Enter the second initial value: ")
+            self.sub_selection = "Secant"
         else:
             self.initial_value_1.setPlaceholderText("Enter the delta value: ")
+            self.sub_selection = "Modified Secant"
+    
+    def NR_method_selected(self, Selection):
+        if(Selection == "Modified Version 1 : Newton-Raphson"):
+            self.m.setVisible(True)
+        else:
+            self.m.setVisible(False)
+
     def start(self):
         self.equation = self.equation_input.text()
         if(self.method_combo.currentText() == "Bisection"):
@@ -565,17 +674,30 @@ class NonLinearSolver(QWidget):
         elif(self.method_combo.currentText() == "Newton-Raphson Methods"):
             if(self.NR_method_combo.currentText() == "Original Newton-Raphson"):
                 self.result = Original_Newton_Raphson(self.equation, float(self.initial_value_0.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
+                self.sub_selection = "Secant"
             elif(self.NR_method_combo.currentText() == "Modified Version 1 : Newton-Raphson"):
-                self.result = Modified1_Newton_Raphson(self.equation, float(self.initial_value_0.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
+                self.result = Modified1_Newton_Raphson(self.equation, float(self.initial_value_0.text()), self.significant_figures , int(self.m.text()) , float(self.Error_input.text()), float(self.Max_input.text()))
+                self.sub_selection = "Secant"
             elif(self.NR_method_combo.currentText() == "Modified Version 2 : Newton-Raphson"):
                 self.result = Modified2_Newton_Raphson(self.equation, float(self.initial_value_0.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
+                self.sub_selection = "Modified Version 2 : Newton-Raphson"
         elif(self.method_combo.currentText() == "Secant Methods"):
             if(self.SE_method_combo.currentText() == "Secant Method"):
                 self.result = Secant(self.equation, float(self.initial_value_0.text()), float(self.initial_value_1.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
             elif(self.SE_method_combo.currentText() == "Modified Secant Method"):
                 self.result = ModifiedSecant(self.equation, float(self.initial_value_0.text()), float(self.initial_value_1.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
         
-        self.results_label.setText(f"{self.result}")  # Add to the list
+        self.results_label.setText(f"answer : {self.result.get('root')}\n"
+        f"n iterations : {self.result.get('iterations')}\n"
+        f"relative error : {self.result.get('relative_error')}\n"
+        f"correct significant figures : {self.result.get('correct_Significant_Figures')}\n"
+        f"function value : {self.result.get('function_value')}")
+        for i in range(0,len(self.result.get('iteration_history'))):
+            if(i < len(self.result.get('iteration_history')) - 1):
+                self.results_history.addItem(f"Iteration {i + 1}")
+            else:
+                self.results_history.addItem("Final Iteration")
+        self.results_history.setCurrentText("Final Iteration")
         self.results_label.setVisible(True)
         self.stacked_widget.setCurrentWidget(self.results_page)
 
@@ -602,11 +724,77 @@ class NonLinearSolver(QWidget):
         self.method_combo.setCurrentIndex(0)
         self.NR_method_combo.setCurrentIndex(0)
         self.SE_method_combo.setCurrentIndex(0)
+        self.picked = "Bisection"
+        self.sub_selection = "Secant"
     def get_last_update(self):
         self.equation = ""
+        self.results_history.clear()
+
+    def open_linear_window(self):
+        self.open_equation_solver.emit()
+        self.close()
     
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    main_window = NonLinearSolver()
-    main_window.show()
-    sys.exit(app.exec_())
+    def open_main_window(self):
+        self.return_to_main.emit()
+        self.close()
+
+    def change_result(self):
+        index = self.results_history.currentIndex()
+        print(f"Current Index: {index}\n")  # Debugging line
+        print(f"Results History Count: {self.results_history.count()}\n")
+        print(f"{self.picked}  {self.sub_selection}\n")
+        if(index == self.results_history.count() - 1):
+            self.results_label.setText(f"answer : {self.result.get('root')}\n"
+            f"n iterations : {self.result.get('iterations')}\n"
+            f"relative error : {self.result.get('relative_error')}\n"
+            f"correct significant figures : {self.result.get('correct_Significant_Figures')}\n"
+            f"function value : {self.result.get('function_value')}")
+        else:
+            if(self.picked == 'Bisection'):
+                self.results_label.setText(f"xl: {self.result.get('iteration_history')[index].get('xl')}\n"
+                                       f"xu: {self.result.get('iteration_history')[index].get('xu')}\n"
+                                       f"xr: {self.result.get('iteration_history')[index].get('xr')}\n"
+                                       f"f(xr): {self.result.get('iteration_history')[index].get('f(xr)')}\n"
+                                       f"relative error: {self.result.get('iteration_history')[index].get('relative_error')}\n"
+                                       f"iteration: {self.result.get('iteration_history')[index].get('iteration')}")
+            elif(self.picked == 'False Position'):
+                self.results_label.setText(f"xl: {self.result.get('iteration_history')[index].get('xl')}\n"
+                                       f"xu: {self.result.get('iteration_history')[index].get('xu')}\n"
+                                       f"xr: {self.result.get('iteration_history')[index].get('xr')}\n"
+                                       f"f(xr): {self.result.get('iteration_history')[index].get('f(xr)')}\n"
+                                       f"relative error: {self.result.get('iteration_history')[index].get('relative_error')}\n"
+                                       f"iteration: {self.result.get('iteration_history')[index].get('iteration')}")  
+            elif(self.picked == 'Fixed-Point Iteration'):
+                self.results_label.setText(f"x_old: {self.result.get('iteration_history')[index].get('x_old')}\n"
+                                       f"x_new: {self.result.get('iteration_history')[index].get('x_new')}\n"
+                                       f"fx: {self.result.get('iteration_history')[index].get('fx')}\n"
+                                       f"relative error: {self.result.get('iteration_history')[index].get('relative_error')}\n"
+                                       f"iteration: {self.result.get('iteration_history')[index].get('iteration')}")
+            elif(self.picked == 'Newton-Raphson Methods'):
+                self.results_label.setText(f"x: {self.result.get('iteration_history')[index].get('x')}\n"
+                                       f"f(x): {self.result.get('iteration_history')[index].get('f(x)')}\n"
+                                       f"f\'(x): {self.result.get('iteration_history')[index].get('f\'(x)')}\n"
+                                        f"relative error: {self.result.get('iteration_history')[index].get('relative_error')}\n")
+                if(self.sub_selection == "Modified Version 2 : Newton-Raphson"):
+                    self.results_label.setText(f"x: {self.result.get('iteration_history')[index].get('x')}\n"
+                                       f"f(x): {self.result.get('iteration_history')[index].get('f(x)')}\n"
+                                       f"f\'(x): {self.result.get('iteration_history')[index].get('f\'(x)')}\n"
+                                        f"f\'\'(x): {self.result.get('iteration_history')[index].get('f\'\'(x)')}\n"
+                                        f"relative error: {self.result.get('iteration_history')[index].get('relative_error')}\n")
+            elif(self.picked == 'Secant Methods'):
+                if(self.sub_selection == 'Secant'):
+                    self.results_label.setText(f"x0: {self.result.get('iteration_history')[index].get('x0')}\n"
+                                       f"x1: {self.result.get('iteration_history')[index].get('x1')}\n"
+                                       f"x2: {self.result.get('iteration_history')[index].get('x2')}\n"
+                                       f"f(x0): {self.result.get('iteration_history')[index].get('fx0')}\n"
+                                        f"f(x1): {self.result.get('iteration_history')[index].get('fx1')}\n"
+                                       f"f(x2): {self.result.get('iteration_history')[index].get('fx2')}\n"
+                                       f"relative error: {self.result.get('iteration_history')[index].get('relative_error')}\n"
+                                       f"iteration: {self.result.get('iteration_history')[index].get('iteration')}")
+                elif(self.sub_selection == 'Modified Secant'):
+                    self.results_label.setText(f"x: {self.result.get('iteration_history')[index].get('x')}\n"
+                                               f"x_plus_delta: {self.result.get('iteration_history')[index].get('x_plus_delta')}\n"
+                                               f"x_new: {self.result.get('iteration_history')[index].get('x_new')}\n"
+                                               f"f(x): {self.result.get('iteration_history')[index].get('fx')}\n"
+                                               f"f(x_plus_delta): {self.result.get('iteration_history')[index].get('fx_plus_delta')}\n"
+                                                f"relative error: {self.result.get('iteration_history')[index].get('relative_error')}\n")
