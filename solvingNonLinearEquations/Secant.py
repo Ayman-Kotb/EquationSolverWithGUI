@@ -1,10 +1,8 @@
 from math import *
-from time import time
 from convertToFunc import create_function_from_expression
 from significantFigures import round_to_significantFigures
 
 def Secant(expression, x0, x1, significantFigures, tol=0.00001, maxIterations=50):
-    start_time = time()
     f = create_function_from_expression(expression)
     
     x0 = round_to_significantFigures(x0, significantFigures)
@@ -36,7 +34,6 @@ def Secant(expression, x0, x1, significantFigures, tol=0.00001, maxIterations=50
         
         correct_sig_figs = floor(2 - log10(2 * relative_error)) if relative_error > 0 else significantFigures
         
-        
         iteration_details = {
             'iteration': it,
             'x0': round_to_significantFigures(x0, significantFigures),
@@ -45,7 +42,7 @@ def Secant(expression, x0, x1, significantFigures, tol=0.00001, maxIterations=50
             'fx0': round_to_significantFigures(f0, significantFigures),
             'fx1': round_to_significantFigures(f1, significantFigures),
             'fx2': round_to_significantFigures(f2, significantFigures),
-            'relative_error': round_to_significantFigures(relative_error, significantFigures) if it!=1 else "No Relative error",
+            'relative_error': round_to_significantFigures(relative_error, significantFigures),
             'sig_figs': round_to_significantFigures(correct_sig_figs, significantFigures)
         }
         iteration_history.append(iteration_details)
@@ -62,16 +59,13 @@ def Secant(expression, x0, x1, significantFigures, tol=0.00001, maxIterations=50
             print(f"Maximum iterations ({maxIterations}) reached")
             break
     
-    end_time = time()
-    execution_time = end_time - start_time
     return {
         'root': round_to_significantFigures(x2, significantFigures),
         'iterations': it,
         'relative_error': round_to_significantFigures(relative_error, significantFigures),
         'correct_Significant_Figures': round_to_significantFigures(correct_sig_figs, significantFigures),
         'function_value': round_to_significantFigures(f(x2), significantFigures),
-        'iteration_history': iteration_history,
-        'execution_time': execution_time
+        'iteration_history': iteration_history
     }
 
 # Example usage:
