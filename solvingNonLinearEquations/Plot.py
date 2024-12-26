@@ -7,24 +7,24 @@ from PyQt5.QtCore import Qt
 from sympy import symbols, sympify, lambdify
 
 class PlotWindow(QWidget):
-    def __init__(self, equation_str, x_range=(-5, 5), y_range=(-5, 5), num_points=1000, title="Function Plot"):
+    def __init__(self, equations, x_range=(-5, 5), y_range=(-5, 5), num_points=1000, title="Function Plot"):
         super().__init__()
         self.setWindowTitle("Plot Window")
         self.setGeometry(100, 100, 800, 600)
-        
+
         # Set dark theme for the window
         self.setStyleSheet("background-color: #2e2e2e; color: #ffffff;")
-        
+
         # Initial ranges
         self.x_range = x_range
         self.y_range = y_range
-        
-        # Convert the string equation to a callable function
-        self.equation_func = self.string_to_function(equation_str)
-        
+
+        # Convert the string equations to callable functions
+        self.equation_funcs = [self.string_to_function(eq) for eq in equations]
+
         # Create the plot canvas
-        self.canvas = self.create_pretty_plot(self.equation_func, self.x_range, self.y_range, num_points, title)
-        
+        self.canvas = self.create_pretty_plot(self.equation_funcs, self.x_range, self.y_range, num_points, title)
+
         # Create UI elements for range input
         self.x_range_input = QLineEdit(self)
         self.x_range_input.setPlaceholderText("Enter x range (min, max)")
@@ -51,21 +51,23 @@ class PlotWindow(QWidget):
         layout.addLayout(input_layout)
         layout.addWidget(self.canvas)
         self.setLayout(layout)
-    
-    def create_pretty_plot(self, equation_func, x_range, y_range, num_points, title):
+
+    def create_pretty_plot(self, equation_funcs, x_range, y_range, num_points, title):
         """
-        Creates a pretty plot of a mathematical function with a dark theme.
+        Creates a pretty plot of multiple mathematical functions with a dark theme.
         """
         fig, ax = plt.subplots(figsize=(8, 6), dpi=100)
 
         x = np.linspace(x_range[0], x_range[1], num_points)
-        try:
-            y = equation_func(x)
-        except Exception as e:
-            print(f"Error evaluating function: {e}")
-            return None
-        
-        ax.plot(x, y, linewidth=2, color='#2196F3')  # Material Design blue
+        colors = ['#2196F3', '#E91E63', '#FF9800', '#4CAF50', '#9C27B0']  # Color palette for functions
+
+        for i, equation_func in enumerate(equation_funcs):
+            try:
+                y = equation_func(x)
+                ax.plot(x, y, linewidth=2, color=colors[i % len(colors)], label=f'Function {i + 1}')
+            except Exception as e:
+                print(f"Error evaluating function {i + 1}: {e}")
+
         ax.set_title(title, fontsize=14, pad=20, color='white')
         ax.set_xlabel('x', fontsize=12, color='white')
         ax.set_ylabel('y', fontsize=12, color='white')
@@ -84,10 +86,11 @@ class PlotWindow(QWidget):
         # Apply y_range to limit y-axis
         ax.set_ylim(y_range)  # Set the y-axis limits based on y_range
 
+        ax.legend(loc='upper left', fontsize=10, facecolor='#2e2e2e', edgecolor='white')  # Add legend
         plt.tight_layout()
 
         return FigureCanvasQTAgg(fig)
-    
+
     def string_to_function(self, equation_str):
         """
         Converts a string math expression to a callable function using sympy.
@@ -105,13 +108,13 @@ class PlotWindow(QWidget):
         try:
             x_range_str = self.x_range_input.text()
             y_range_str = self.y_range_input.text()
-            
+
             # Convert the string inputs to tuples of floats
             self.x_range = tuple(map(float, x_range_str.split(',')))
             self.y_range = tuple(map(float, y_range_str.split(',')))
 
             # Update the plot with new ranges
-            self.canvas = self.create_pretty_plot(self.equation_func, self.x_range, self.y_range, 1000, "Updated Plot")
+            self.canvas = self.create_pretty_plot(self.equation_funcs, self.x_range, self.y_range, 1000, "Updated Plot")
             self.layout().itemAt(1).widget().setParent(None)  # Remove old canvas
             self.layout().addWidget(self.canvas)  # Add new canvas to layout
 
@@ -125,9 +128,9 @@ if __name__ == "__main__":
 
     app = QApplication([])
 
-    # Example string input equation
-    equation_str = "5"  # The equation to plot
-    window = PlotWindow(equation_str)
+    # Example list of equations
+    equations = ["x**2", "x**3 - 2*x", "sin(x)"]
+    window = PlotWindow(equations)
     window.show()
 
     app.exec_()
