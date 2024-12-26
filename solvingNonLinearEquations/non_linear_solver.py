@@ -66,15 +66,21 @@ class NonLinearSolver(QWidget):
 
     def open_plot_window(self , equation_str):
       # Define the string equation to plot
-      equation_str = self.equation_input.text()  # Example string representation of the equation
-      
-      # Open the plotting window and pass the string equation
-      self.plot_window = PlotWindow(
-          equation_str=equation_str,  # Pass the string equation here
-          x_range=(-5, 5),
-          title = f"Function: f(x) = {self.equation_input.text()}"
+      equations = self.equation_input.text()  # Example string representation of the equation
+      if(self.method_combo.currentText() == "Fixed-Point Iteration"):
+        self.plot_window = PlotWindow(
+        equations=[equations,"x"],  # Pass the equation as a list
+        x_range=(-5, 5),
+        title=f"Function: f(x) = {self.equation_input.text()}"
       )
+      else:
+       self.plot_window = PlotWindow(
+        equations=[equations],  # Pass the equation as a list
+        x_range=(-5, 5),
+        title=f"Function: f(x) = {self.equation_input.text()}"
+       )
       self.plot_window.show()
+
 
 
 
