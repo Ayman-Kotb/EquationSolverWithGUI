@@ -1,37 +1,51 @@
 from main import EquationSolverApp
 from non_linear_solver import NonLinearSolver
-from ErrorHandler import ErrorHandler
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-    QLineEdit, QSlider, QPushButton, QMessageBox, QGridLayout, QComboBox, QRadioButton, QGroupBox, QStackedWidget,
-    QScrollArea
+    QApplication, QWidget, QVBoxLayout, QLabel, QPushButton
 )
+from PyQt5.QtCore import Qt
 import sys
 
 class MainApp(QWidget):
     def __init__(self):
         super().__init__()
-
-        # Initialize the main window
         self.setWindowTitle("Main Application")
         self.setGeometry(200, 200, 450, 450)
 
-        # Create the buttons
-        self.linear_button = QPushButton("Linear Equations", self)
-        self.linear_button.clicked.connect(self.open_linear_window)
+        # Set background color
+        self.setStyleSheet("background-color: #000000; font-family: Arial, sans-serif;")
 
+        # Welcome label
+        self.label = QLabel("Welcome to the Equations Solver!")
+        self.label.setStyleSheet("font-size: 24px; color: #55e339; font-weight: bold;")
+        self.label.setAlignment(Qt.AlignCenter)
+
+        # Choose label
+        self.choose_label = QLabel("Choose the type of equations:")
+        self.choose_label.setStyleSheet("font-size: 18px; color: #249c06;")
+        self.choose_label.setAlignment(Qt.AlignCenter)
+
+        # Create buttons
+        self.linear_button = QPushButton("Linear Equations", self)
         self.nonlinear_button = QPushButton("Non-Linear Equations", self)
-        self.nonlinear_button.clicked.connect(self.open_nonlinear_window)
-        
-        self.setStyleSheet("background-color: #000000;") 
+
         # Style the buttons
         self.set_button_styles()
 
-        # Create a layout and add the buttons
+        # Connect buttons to their respective actions
+        self.linear_button.clicked.connect(self.open_linear_window)
+        self.nonlinear_button.clicked.connect(self.open_nonlinear_window)
+
+        # Create layout
         layout = QVBoxLayout()
+        layout.setAlignment(Qt.AlignCenter)
+        layout.setSpacing(20)
+        layout.addWidget(self.label)
+        layout.addWidget(self.choose_label)
         layout.addWidget(self.linear_button)
         layout.addWidget(self.nonlinear_button)
-      
+        layout.setContentsMargins(40, 40, 40, 40)
+
         self.setLayout(layout)
 
     def set_button_styles(self):

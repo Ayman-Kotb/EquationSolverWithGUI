@@ -77,4 +77,4 @@ def Modified1_Newton_Raphson(expression, xi, significantFigures = 28, m = 1, tol
         'iteration_history': iterations
     }
 
-print(Modified1_Newton_Raphson("3*x**4+6.1*x**3-2*x**2+3*x+2 ",0 ,6 ,tol=0.01)) 
+# print(Modified1_Newton_Raphson("3*x**4+6.1*x**3-2*x**2+3*x+2 ",0 ,6 ,tol=0.01)) 

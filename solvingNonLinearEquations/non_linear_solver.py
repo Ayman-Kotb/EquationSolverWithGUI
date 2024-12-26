@@ -748,7 +748,7 @@ class NonLinearSolver(QWidget):
         self.results_time.setText(f"Time : {self.time} ms")
         self.stacked_widget.setCurrentWidget(self.results_page)
     except Exception as e:
-      ErrorHandler.show_error(e)
+      ErrorHandler.show_error(e.__getattribute__('message'))
     def on_clear_back_button_click(self):
         self.show_input_page()
         self.clear_inputs()
