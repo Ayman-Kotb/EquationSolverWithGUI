@@ -7,42 +7,33 @@ class ErrorHandler:
     def show_error(message, details=None):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Critical)
+        msg.setWindowTitle("Error")
         msg.setText(message)
         if details:
             msg.setDetailedText(details)
+        msg.setStyleSheet("""
+        QMessageBox {
+            background-color: #2b2b2b;  /* Dark background */
+            color: #f8f8f2;  /* Light text */
+            font-family: Arial, sans-serif; /* Font family */
+            font-size: 14px; /* Text size */
+        }
+        QMessageBox QPushButton {
+            background-color: #5c6370;  /* Button background */
+            color: #ffffff;  /* Button text color */
+            border: 1px solid #4b5263;  /* Button border */
+            padding: 5px 15px;
+            border-radius: 5px;  /* Rounded corners */
+        }
+        QMessageBox QPushButton:hover {
+            background-color: #3e4451;  /* Hover background */
+        }
+        QMessageBox QLabel {
+            color: #f8f8f2;  /* Label text color */
+            font-size: 14px; /* Label text size */
+        }
+    """)
         msg.exec_()
-
-class CalculatorWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.initUI()
-
-    def initUI(self):
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        layout = QVBoxLayout(central_widget)
-
-        self.input = QLineEdit()
-        self.result_label = QLabel()
-        self.calc_button = QPushButton('Calculate')
-        
-        layout.addWidget(self.input)
-        layout.addWidget(self.calc_button)
-        layout.addWidget(self.result_label)
-        
-        self.calc_button.clicked.connect(self.safe_calculate)
-
-    def safe_calculate(self):
-        try:
-            # Example calculation that might raise errors
-            expression = self.input.text()
-            result = eval(expression)  # Note: eval is used for demonstration only
-            self.result_label.setText(f"Result: {result}")
-        except Exception as e:
-            ErrorHandler.show_error(
-                "Calculation Error",
-                f"Error details:\n{str(e)}\n\n{traceback.format_exc()}"
-            )
 
 def exception_hook(exctype, value, traceback_obj):
     """Global exception handler for unhandled exceptions"""

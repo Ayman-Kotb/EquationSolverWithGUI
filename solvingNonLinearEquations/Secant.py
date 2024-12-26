@@ -56,8 +56,7 @@ def Secant(expression, x0, x1, significantFigures = 28, tol=0.00001, maxIteratio
         f1 = f2
         
         if it >= maxIterations:
-            print(f"Maximum iterations ({maxIterations}) reached")
-            break
+            raise ValueError(f"Maximum iterations ({maxIterations}) reached")
     
     return {
         'root': round_to_significantFigures(x2, significantFigures),

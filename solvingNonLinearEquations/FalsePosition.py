@@ -18,7 +18,7 @@ def false_position(expression, a, b, significantFigures = 28, tol=0.00001, maxIt
     fb = round_to_significantFigures(f(b), significantFigures)
     
     if fa * fb >= 0:
-        raise ValueError(f"method may fail.")
+        raise ValueError("even number of roots between limits. choose another method.")
     iterations = []
     it = 0
     previous_c = a
@@ -70,8 +70,7 @@ def false_position(expression, a, b, significantFigures = 28, tol=0.00001, maxIt
         
         
         if it >= maxIterations:
-            print(f"Warning: Maximum iterations ({maxIterations}) reached")
-            break
+            raise ValueError(f"Warning: Maximum iterations ({maxIterations}) reached")
     
     return {
         'root': round_to_significantFigures(c, significantFigures),

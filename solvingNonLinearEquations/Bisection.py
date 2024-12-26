@@ -18,7 +18,7 @@ def Bisection(expression, a, b, significantFigures = 28, tol=0.00001, maxIterati
     fb = round_to_significantFigures(f(b), significantFigures)
     
     if fa * fb >= 0:
-        raise ValueError("method may fail.")
+        raise ValueError("even number of roots between limits. choose another method.")
     
     iterations = []
     it = 0
@@ -66,8 +66,7 @@ def Bisection(expression, a, b, significantFigures = 28, tol=0.00001, maxIterati
         
         
         if it >= maxIterations:
-            print(f"Maximum iterations ({maxIterations}) reached")
-            break
+            raise ValueError(f"Maximum iterations ({maxIterations}) reached")
     
     return {
         'root': round_to_significantFigures(c, significantFigures),
