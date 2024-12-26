@@ -59,7 +59,7 @@ def Modified2_Newton_Raphson(expression, xi, significantFigures = 28, tol=0.0000
             'f\'\'(x)': d2f_xi,
             'relative_error': round_to_significantFigures(relative_error, significantFigures)
         })
-        if abs(f_xi) < tol or relative_error < tol:
+        if abs(f_xi) == 0 or relative_error < tol:
             break
         
     if it >= maxIterations:

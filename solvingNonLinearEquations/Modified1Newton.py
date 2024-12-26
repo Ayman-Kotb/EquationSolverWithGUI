@@ -56,7 +56,7 @@ def Modified1_Newton_Raphson(expression, xi, significantFigures=28, m=1, tol=0.0
         })
         
         # Check convergence conditions
-        if abs(f_xi) < tol or relative_error < tol:
+        if abs(f_xi) == 0 or relative_error < tol:
             break
             
     if it >= maxIterations:

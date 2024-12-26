@@ -52,12 +52,11 @@ def Original_Newton_Raphson(expression, xi, significantFigures=28, tol=0.00001, 
         })
         
         # Check convergence conditions
-        if abs(f_xi) < tol or relative_error < tol:
+        if abs(f_xi) == 0 or relative_error < tol:
             break
             
-        if it >= maxIterations:
-            print(f"Warning: Maximum iterations ({maxIterations}) reached")
-            break
+    if it > maxIterations:
+        raise ValueError(f"Warning: Maximum iterations ({maxIterations}) reached")
     
     return {
         'root': round_to_significantFigures(xi, significantFigures),
