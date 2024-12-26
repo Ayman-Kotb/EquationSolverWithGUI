@@ -35,7 +35,7 @@ def Bisection(expression, a, b, significantFigures = 28, tol=0.00001, maxIterati
         if c != 0:
             relative_error = (abs(c - previous_c) / abs(c))*100
         else:
-            relative_error =(abs(c - previous_c))*100
+            relative_error = (abs(c - previous_c))*100
 
         iteration_data = {
             'iteration': it,
