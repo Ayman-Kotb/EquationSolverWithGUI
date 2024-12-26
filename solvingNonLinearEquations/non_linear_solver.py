@@ -29,7 +29,7 @@ class NonLinearSolver(QWidget):
         self.first = 0
         self.sec = 1 
         self.variables = 2  # Default number of variables
-        self.significant_figures = 2  # Default significant figures
+        self.significant_figures = 28  # Default significant figures
         self.equation = ""
         self.result = []
         self.sub_selection = "Secant"
@@ -704,40 +704,64 @@ class NonLinearSolver(QWidget):
             self.equation = self.equation_input.text()
             if(self.method_combo.currentText() == "Bisection"):
                 start_time = time.perf_counter()
-                self.result = Bisection(self.equation, float(self.initial_value_0.text()), float(self.initial_value_1.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
+                if((self.Error_input.text()) == "" and (self.Max_input.text()) == ""):
+                    self.result = Bisection(self.equation, float(self.initial_value_0.text()), float(self.initial_value_1.text()), self.significant_figures)
+                else:
+                  self.result = Bisection(self.equation, float(self.initial_value_0.text()), float(self.initial_value_1.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
                 end_time = time.perf_counter()
             elif(self.method_combo.currentText() == "False Position"):
                 start_time = time.perf_counter()
-                self.result = false_position(self.equation, float(self.initial_value_0.text()), float(self.initial_value_1.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
+                if((self.Error_input.text()) == "" and (self.Max_input.text()) == ""):
+                  self.result = false_position(self.equation, float(self.initial_value_0.text()), float(self.initial_value_1.text()), self.significant_figures)
+                else:
+                  self.result = false_position(self.equation, float(self.initial_value_0.text()), float(self.initial_value_1.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
                 end_time = time.perf_counter() 
             elif(self.method_combo.currentText() == "Fixed-Point Iteration"):
                 start_time = time.perf_counter()
-                self.result = FixedPoint(self.equation, float(self.initial_value_0.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text())) 
+                if((self.Error_input.text()) == "" and (self.Max_input.text()) == ""):
+                  self.result = FixedPoint(self.equation, float(self.initial_value_0.text()), self.significant_figures) 
+                else:
+                  self.result = FixedPoint(self.equation, float(self.initial_value_0.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text())) 
                 end_time = time.perf_counter()
             elif(self.method_combo.currentText() == "Newton-Raphson Methods"):
                 if(self.NR_method_combo.currentText() == "Original Newton-Raphson"):
                     start_time = time.perf_counter()
-                    self.result = Original_Newton_Raphson(self.equation, float(self.initial_value_0.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
+                    if((self.Error_input.text()) == "" and (self.Max_input.text()) == ""):
+                      self.result = Original_Newton_Raphson(self.equation, float(self.initial_value_0.text()), self.significant_figures)
+                    else:
+                      self.result = Original_Newton_Raphson(self.equation, float(self.initial_value_0.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
                     end_time = time.perf_counter()
                     self.sub_selection = "Secant"
                 elif(self.NR_method_combo.currentText() == "Modified Version 1 : Newton-Raphson"):
                     start_time = time.perf_counter()
-                    self.result = Modified1_Newton_Raphson(self.equation, float(self.initial_value_0.text()), self.significant_figures , int(self.m.text()) , float(self.Error_input.text()), float(self.Max_input.text()))
+                    if((self.Error_input.text()) == "" and (self.Max_input.text()) == ""):
+                      self.result = Modified1_Newton_Raphson(self.equation, float(self.initial_value_0.text()), self.significant_figures , int(self.m.text()))
+                    else:
+                      self.result = Modified1_Newton_Raphson(self.equation, float(self.initial_value_0.text()), self.significant_figures , int(self.m.text()) , float(self.Error_input.text()), float(self.Max_input.text()))
                     end_time = time.perf_counter()
                     self.sub_selection = "Secant"
                 elif(self.NR_method_combo.currentText() == "Modified Version 2 : Newton-Raphson"):
                     start_time = time.perf_counter()
-                    self.result = Modified2_Newton_Raphson(self.equation, float(self.initial_value_0.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
+                    if((self.Error_input.text()) == "" and (self.Max_input.text()) == ""):
+                      self.result = Modified2_Newton_Raphson(self.equation, float(self.initial_value_0.text()), self.significant_figures)
+                    else:
+                      self.result = Modified2_Newton_Raphson(self.equation, float(self.initial_value_0.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
                     end_time = time.perf_counter()
                     self.sub_selection = "Modified Version 2 : Newton-Raphson"
             elif(self.method_combo.currentText() == "Secant Methods"):
                 if(self.SE_method_combo.currentText() == "Secant Method"):
                     start_time = time.perf_counter()
-                    self.result = Secant(self.equation, float(self.initial_value_0.text()), float(self.initial_value_1.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
+                    if((self.Error_input.text()) == "" and (self.Max_input.text()) == ""):
+                      self.result = Secant(self.equation, float(self.initial_value_0.text()), float(self.initial_value_1.text()), self.significant_figures)
+                    else:
+                      self.result = Secant(self.equation, float(self.initial_value_0.text()), float(self.initial_value_1.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
                     end_time = time.perf_counter()
                 elif(self.SE_method_combo.currentText() == "Modified Secant Method"):
                     start_time = time.perf_counter()
-                    self.result = ModifiedSecant(self.equation, float(self.initial_value_0.text()), float(self.initial_value_1.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
+                    if((self.Error_input.text()) == "" and (self.Max_input.text()) == ""):
+                      self.result = ModifiedSecant(self.equation, float(self.initial_value_0.text()), float(self.initial_value_1.text()), self.significant_figures)
+                    else:
+                      self.result = ModifiedSecant(self.equation, float(self.initial_value_0.text()), float(self.initial_value_1.text()), self.significant_figures , float(self.Error_input.text()), float(self.Max_input.text()))
                     end_time = time.perf_counter()
             self.results_label.setText(f"answer : {self.result.get('root')}\n"
             f"n iterations : {self.result.get('iterations')}\n"
