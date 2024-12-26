@@ -55,8 +55,7 @@ def ModifiedSecant(expression, x0, delta, significantFigures = 28, tol=0.00001, 
         x0 = x1
         
         if it >= maxIterations:
-            print(f"Maximum iterations ({maxIterations}) reached")
-            break
+            raise ValueError(f"Maximum iterations ({maxIterations}) reached")
     
     final_fx = round_to_significantFigures(f(x1), significantFigures)
     end_time = time()

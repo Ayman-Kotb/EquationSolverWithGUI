@@ -49,8 +49,7 @@ def FixedPoint(expression, x0, significantFigures = 28, tol=0.00001, maxIteratio
         
         # Check if maximum iterations reached
         if it >= maxIterations:
-            print(f"Maximum iterations ({maxIterations}) reached")
-            break
+            raise ValueError(f"Maximum iterations ({maxIterations}) reached")
     
     # Calculate final function value (how far from being a true fixed point)
     final_error = round_to_significantFigures(abs(x1 - g(x1)), significantFigures)
