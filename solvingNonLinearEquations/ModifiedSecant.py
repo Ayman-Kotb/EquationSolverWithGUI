@@ -3,7 +3,7 @@ from math import *
 from convertToFunc import create_function_from_expression
 from significantFigures import round_to_significantFigures
 
-def ModifiedSecant(expression, x0, delta, significantFigures, tol=0.00001, maxIterations=50):
+def ModifiedSecant(expression, x0, delta, significantFigures = 28, tol=0.00001, maxIterations=50):
     start_time = time()
     f = create_function_from_expression(expression)
     

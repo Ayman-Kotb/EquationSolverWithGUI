@@ -3,7 +3,7 @@ from convertToFunc import create_function_from_expression
 from significantFigures import round_to_significantFigures
 from calculateDerivative import create_derivative_from_expression
 
-def Modified1_Newton_Raphson(expression, xi, significantFigures, m = 1, tol=0.00001, maxIterations=50):
+def Modified1_Newton_Raphson(expression, xi, significantFigures = 28, m = 1, tol=0.00001, maxIterations=50):
 
     f = create_function_from_expression(expression)
     df = create_derivative_from_expression(expression)
@@ -66,7 +66,7 @@ def Modified1_Newton_Raphson(expression, xi, significantFigures, m = 1, tol=0.00
             })
         
             if it >= maxIterations:
-                break
+                raise ValueError("Maximum iterations reached, the system is diverging") 
     
     return {
         'root': round_to_significantFigures(xi, significantFigures),

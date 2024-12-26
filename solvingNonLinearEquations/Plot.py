@@ -126,7 +126,7 @@ if __name__ == "__main__":
     app = QApplication([])
 
     # Example string input equation
-    equation_str = "3*x + 5"  # The equation to plot
+    equation_str = "5"  # The equation to plot
     window = PlotWindow(equation_str)
     window.show()
 

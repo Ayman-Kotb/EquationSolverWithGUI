@@ -72,7 +72,7 @@ class NonLinearSolver(QWidget):
       self.plot_window = PlotWindow(
           equation_str=equation_str,  # Pass the string equation here
           x_range=(-5, 5),
-          title="Linear Function: f(x) = 3x + 5"
+          title = f"Function: f(x) = {self.equation_input.text()}"
       )
       self.plot_window.show()
 
@@ -91,7 +91,7 @@ class NonLinearSolver(QWidget):
         """)
         self.sig_slider = QSlider()
         self.sig_slider.setOrientation(1)  # Horizontal
-        self.sig_slider.setRange(1, 20)
+        self.sig_slider.setRange(1, 28)
         self.sig_slider.setValue(self.significant_figures)
         self.sig_slider.valueChanged.connect(self.Change_Precision)
         self.sig_slider.setStyleSheet("""
@@ -238,33 +238,41 @@ class NonLinearSolver(QWidget):
         self.NR_method_combo.currentIndexChanged.connect(lambda: self.NR_method_selected(self.NR_method_combo.currentText()))
         self.NR_method_combo.setStyleSheet("""
             QComboBox {
-                background-color: #181a18;  /* Background color */
-                color: white;                /* Text color */
-                border: 2px solid #181a18;      /* Border color and width */
-                border-radius: 10px;         /* Rounded borders */
-                padding: 5px;                /* Optional padding */
+                background-color: #181a18;
+                color: white;
+                border: 2px solid #181a18;
+                border-radius: 10px;
+                padding: 5px;
                 height: 15px;
                 font-size: 14px;
                 font-weight: bold;
-                }
+            }
             QComboBox::drop-down {
-                border: 2px solid #ccc;      /* Border of the drop-down area */
-                border-radius: 10px;         /* Rounded borders for the drop-down */
-                width: 20px;                  /* Width of the drop-down arrow area */
+                border: 2px solid #ccc;
+                border-radius: 10px;
+                width: 20px;
             }
-             QComboBox QAbstractItemView {
+            QComboBox::down-arrow {
+                width: 12px;
+                height: 12px;
+            }
+            QComboBox QListView {
                 background-color: #181a18;
-                selection-background-color: #55e339; /* Background color on hover */
-                selection-color: #ccc; /* Text color on hover */
+                color: white;
+                border: 1px solid white;
             }
-            QComboBox QAbstractItemView::item {
-                background-color: #181a18; /* Default item background */
-                color: #ccc; /* Default item text color */
+            QComboBox QListView::item {
+                color: white;
+                padding: 3px;
             }
-            QComboBox QAbstractItemView::item:hover {
-                background-color: #55e339; /* Background color when hovering */
-                color: #ccc; /* Text color when hovering */
-            }      
+            QComboBox QListView::item:selected {
+                background-color: #55e339;
+                color: white;
+            }
+            QComboBox QListView::item:hover {
+                background-color: #55e339;
+                color: white;
+            }
         """)
 
         NR_method_layout.addWidget(self.NR_method_label)
@@ -296,24 +304,33 @@ class NonLinearSolver(QWidget):
                 height: 15px;
                 font-size: 14px;
                 font-weight: bold;
-                }
+            }                 
             QComboBox::drop-down {
                 border: 2px solid #ccc;      /* Border of the drop-down area */
                 border-radius: 10px;         /* Rounded borders for the drop-down */
                 width: 20px;                  /* Width of the drop-down arrow area */
             }
-             QComboBox QAbstractItemView {
+            QComboBox::down-arrow {
+                width: 12px;
+                height: 12px;
+            }
+            QComboBox QListView  {
                 background-color: #181a18;
-                selection-background-color: #55e339; /* Background color on hover */
-                selection-color: #ccc; /* Text color on hover */
+                color: white;
+                border: 1px solid white;
             }
-            QComboBox QAbstractItemView::item {
+            QComboBox QListView ::item {
                 background-color: #181a18; /* Default item background */
-                color: #ccc; /* Default item text color */
+                color: white; /* Default item text color */
+                padding: 3px;
             }
-            QComboBox QAbstractItemView::item:hover {
-                background-color: #55e339; /* Background color when hovering */
-                color: #ccc; /* Text color when hovering */
+            QComboBox QListView::item:selected {
+                background-color: #55e339;
+                color: white;
+            }
+            QComboBox QListView ::item:hover {
+                background-color: #55e339  !important; /* Background color when hovering */
+                color: white; /* Text color when hovering */
             }      
         """)
 
@@ -354,18 +371,20 @@ class NonLinearSolver(QWidget):
                 border-radius: 10px;         /* Rounded borders for the drop-down */
                 width: 20px;                  /* Width of the drop-down arrow area */
             }
-             QComboBox QAbstractItemView {
-                background-color: #181a18;
-                selection-background-color: #55e339; /* Background color on hover */
-                selection-color: #ccc; /* Text color on hover */
+             QComboBox QListView  {
+                background-color: #181a18 !important;
+                color: white;
+                border: 1px solid white;
             }
-            QComboBox QAbstractItemView::item {
-                background-color: #181a18; /* Default item background */
-                color: #ccc; /* Default item text color */
+            QComboBox QListView::item {
+                background-color: #181a18 !important; /* Default item background */
+                color: white; /* Default item text color */
             }
-            QComboBox QAbstractItemView::item:hover {
-                background-color: #55e339; /* Background color when hovering */
-                color: #ccc; /* Text color when hovering */
+            QComboBox QListView::item:selected {
+                background-color: #55e339 !important;
+            }
+            QComboBox QListView::item:hover {
+                background-color: #55e339 !important; /* Background color when hovering */
             }      
         """)
 
