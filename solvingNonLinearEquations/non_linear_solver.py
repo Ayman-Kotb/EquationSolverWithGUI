@@ -802,13 +802,13 @@ class NonLinearSolver(QWidget):
             elif(self.picked == 'Newton-Raphson Methods'):
                 self.results_label.setText(f"x: {self.result.get('iteration_history')[index].get('x')}\n"
                                        f"f(x): {self.result.get('iteration_history')[index].get('f(x)')}\n"
-                                       f"f\'(x): {self.result.get('iteration_history')[index].get('f\'(x)')}\n"
+                                       f"f(x): {self.result.get('iteration_history')[index].get('f(x)')}\n"
                                         f"relative error: {self.result.get('iteration_history')[index].get('relative_error')}\n")
                 if(self.sub_selection == "Modified Version 2 : Newton-Raphson"):
                     self.results_label.setText(f"x: {self.result.get('iteration_history')[index].get('x')}\n"
                                        f"f(x): {self.result.get('iteration_history')[index].get('f(x)')}\n"
-                                       f"f\'(x): {self.result.get('iteration_history')[index].get('f\'(x)')}\n"
-                                        f"f\'\'(x): {self.result.get('iteration_history')[index].get('f\'\'(x)')}\n"
+                                       f"f(x): {self.result.get('iteration_history')[index].get('f(x)')}\n"
+                                        f"f(x): {self.result.get('iteration_history')[index].get('f(x)')}\n"
                                         f"relative error: {self.result.get('iteration_history')[index].get('relative_error')}\n")
             elif(self.picked == 'Secant Methods'):
                 if(self.sub_selection == 'Secant'):
